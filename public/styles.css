@@ -1,0 +1,1267 @@
+@font-face {
+    font-family: 'Univers Ultra Condensed';
+    src: url('./fonts/Univers Ultra Condensed.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Berthold Akzidenz Grotesk BE Extended';
+    src: url('./fonts/Berthold Akzidenz Grotesk BE Extended.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended';
+    src: url('./fonts/Berthold Akzidenz Grotesk BE Medium Extended.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed';
+    src: url('./fonts/Berthold Akzidenz Grotesk BE Medium Condensed.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold';
+    src: url('./fonts/Berthold Akzidenz Grotesk BE Bold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Set height to 100% for body and html, set background color to black, and font size to 100% */
+body, html {
+    height: 100%;
+    background-color: #000;
+    font-size: 100%;
+}
+
+/* Remove default margin, set font family, background color, and center content using flexbox */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Container for slides, set relative positioning, maintain 4:3 aspect ratio, and full height */
+#slides-container {
+    position: relative;
+    width: calc(100vh * (4 / 3)); /* Adjust width to maintain 4:3 aspect ratio */
+    height: 100vh; /* Full height of the browser */
+    overflow: hidden;
+    background-color: black;
+}
+
+/* Style for individual slides, set absolute positioning, full size, and center content */
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Display active slide using flexbox */
+.slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+/* Style for background images within slides, set full size and cover object fit */
+.slide img.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+/* Style for slide-layer images within slides, set full size and cover object fit */
+.slide img.slide-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+}
+
+/* Style for overlay images within slides, set full size and cover object fit */
+.slide img.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 3;
+}
+
+/* Style for affiliate logo image */
+.slide img.affiliate-logo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 4;
+}
+
+/* Style for affiliate logo image */
+.slide img.affiliate-affiliate-logo, .slide img.affiliate-splash-logo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    right: 2%; /* Shift to the side a bit */
+    object-fit: cover;
+    z-index: 4;
+}
+
+.slide img.affiliate-upnext-logo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    right: 1%; /* Shift to the side a bit */
+    top: 2%; /* Shift down a bit */
+    object-fit: cover;
+    z-index: 4;
+}
+
+/* Style for slide text content, set text color, shadow, and center alignment */
+.slide .text {
+    position: absolute;
+    color:  #f2f2f2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    z-index: 4;
+}
+
+/* Style for slide title text, set font, size, position, and background */
+.slide .title {
+    display: inline-block;
+    text-align: right;
+    font-family: 'Univers Ultra Condensed', sans-serif;
+    font-size: calc(8vh + 1vw);
+    bottom: 82%;
+    transform: scaleX(0.9);
+    transform-origin: left;
+    left: 11%;
+}
+
+/* Style for LDL text, set font, size, position, and background */
+.slide .ldl {
+    position: absolute;
+    display: inline-block;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 3.6vh;
+    transform: scaleX(0.9) !important;
+    transform: scaleY(0.99);
+    bottom: 7%;
+    left: 72%;
+}
+
+.affiliate {
+    z-index: 5;
+    display: inline-block;
+    text-align: left;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.affiliate .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;
+    transform-origin: left;
+    transform: scaleX(0.9) !important;
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+
+.affiliate .affiliateName {
+    position: absolute; /* Ensure the element itself has absolute positioning */
+    bottom: 68.5%;
+    left: 6.75%;
+}
+
+.affiliate .genericText {
+    position: absolute; /* Ensure the element itself has absolute positioning */
+    bottom: 62%;
+    left: 6.75%;
+}
+
+/* Style for Current Conditions (Now) Slide */
+.now {
+    z-index: 5;
+    display: inline-block;
+    text-align: right;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.now .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;       
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Style for Current Conditions (Now) Slide */
+.now .city {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 3.6vh;   
+    bottom: 77%;
+    left: 12.5%;
+
+}
+
+/* Style for humidity field */
+.now .humidity {
+    position: absolute; /* Ensure the element itself has absolute positioning */
+    bottom: 59.5%;
+    right: 45%;
+}
+
+/* Style for pressure field */
+.now .pressure {
+    position: absolute;
+    bottom: 48.4%;
+    right: 45%;
+}
+
+/* Style for wind field */
+.now .wind {
+    position: absolute;
+    bottom: 37.4%;
+    right: 45%;
+}
+
+/* Style for gusts field */
+.now .gusts {
+    position: absolute;
+    bottom: 26.4%;
+    right: 45%;
+}
+
+/* Style for temperature field */
+.now .temperature {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 16.6vh;
+    transform-origin: center;
+    bottom: 18%;
+    left: 77%;
+    transform: translateX(-50%);
+    /* letter-spacing: -5%; */
+}
+
+/* Style for condition field */
+.now .condition {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: center;
+    top: 47.5%;
+    left: 77%;
+    transform: translateX(-50%);
+}
+
+.now .condition_img {
+    position: absolute;
+    bottom: 61%;
+    left: 73.5%;
+    transform: scale(3.2) scaleX(0.9);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+
+.nearby1, .nearby2 {
+    z-index: 5;
+    display: inline-block;
+    text-align: right;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.nearby1 .textdata, .nearby2 .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;       
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+.nearby1 .tempLabel, .nearby2 .tempLabel {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 2.765vh;
+    bottom: 76.5%;
+    left: 46.6%;
+}
+
+.nearby1 .windLabel, .nearby2 .windLabel {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 2.765vh;
+    bottom: 76.5%;
+    left: 75.3%;
+}
+
+.nearby1 .city_1, .nearby2 .city_1 {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 4.5vh;
+    bottom: 68.5%;
+    left: 10.25%;
+}
+
+.nearby1 .temperature_1, .nearby2 .temperature_1 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 66%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nearby1 .city_1_img, .nearby2 .city_1_img {
+    position: absolute;
+    bottom: 67.8%;
+    left: 61.5%;
+    transform: scale(1.95) scaleX(0.9);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.nearby1 .windDir_1, .nearby2 .windDir_1 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 66%;
+    right: 17%; 
+}
+
+.nearby1 .windSpeed_1, .nearby2 .windSpeed_1 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 66%;
+    right: 11%;
+}
+
+.nearby1 .city_2, .nearby2 .city_2 {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 4.5vh;
+    bottom: 53.5%;
+    left: 10.25%;
+}
+
+.nearby1 .temperature_2, .nearby2 .temperature_2 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 51%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nearby1 .city_2_img, .nearby2 .city_2_img {
+    position: absolute;
+    bottom: 52.8%;
+    left: 61.5%;
+    transform: scale(1.95) scaleX(0.9);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.nearby1 .windDir_2, .nearby2 .windDir_2 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 51%;
+    right: 17%; 
+}
+
+.nearby1 .windSpeed_2, .nearby2 .windSpeed_2 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 51%;
+    right: 11%;
+}
+
+.nearby1 .city_3, .nearby2 .city_3 {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 4.5vh;
+    bottom: 38.5%;
+    left: 10.25%;
+}
+
+.nearby1 .temperature_3, .nearby2 .temperature_3 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 36%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nearby1 .city_3_img, .nearby2 .city_3_img {
+    position: absolute;
+    bottom: 37.8%;
+    left: 61.5%;
+    transform: scale(1.95) scaleX(0.9);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.nearby1 .windDir_3, .nearby2 .windDir_3 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 36%;
+    right: 17%; 
+}
+
+.nearby1 .windSpeed_3, .nearby2 .windSpeed_3 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 36%;
+    right: 11%;
+}
+
+.nearby1 .city_4, .nearby2 .city_4 {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 4.5vh;
+    bottom: 23.5%;
+    left: 10.25%;
+}
+
+.nearby1 .temperature_4, .nearby2 .temperature_4 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 21%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nearby1 .city_4_img, .nearby2 .city_4_img {
+    position: absolute;
+    bottom: 22.8%;
+    left: 61.5%;
+    transform: scale(1.95) scaleX(0.9);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.nearby1 .windDir_4, .nearby2 .windDir_4 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 21%;
+    right: 17%; 
+}
+
+.nearby1 .windSpeed_4, .nearby2 .windSpeed_4 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 21%;
+    right: 11%;
+}
+
+.radar-map-container.active {
+    display: block; /* Show when active */
+}
+
+/* Ensure the radar map fits its container */
+#radar-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Styles for Mapbox map container */
+.radar .map-container, .radar2 .map-container, .radar3 .map-container, .regsat .map-container, .regrad .map-container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.nearby1, .nearby2 {
+    z-index: 5;
+    display: inline-block;
+    text-align: right;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.thirtysixhour1, .thirtysixhour2, .thirtysixhour3 {
+    z-index: 5;
+    display: inline-block;
+    text-align: right;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.thirtysixhour1 .textdata, .thirtysixhour2 .textdata, .thirtysixhour3 .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;       
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+
+.thirtysixhour1 .nws, .thirtysixhour2 .nws, .thirtysixhour3 .nws {
+    position: absolute;
+    transform: scaleX(0.93) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 3.5vh;
+    bottom: 76.5%;
+    left: 12%;
+}
+
+.thirtysixhour1 .name, .thirtysixhour2 .name, .thirtysixhour3 .name {
+    position: absolute;
+    transform: scaleX(0.91) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 4.5vh;
+    bottom: 68.5%;
+    left: 12%;
+    color: rgb(225, 214, 124);
+}
+
+.thirtysixhour1 .narrative, .thirtysixhour2 .narrative, .thirtysixhour3 .narrative {
+    position: absolute;
+    transform: scaleY(1.2) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 4vh;
+    top: 33.5%;
+    left: 12%;
+    max-width: 73%;
+}
+
+
+/* Classes for 7-Day (Extended) Forecast */
+.extended {
+    z-index: 5;
+    display: inline-block;
+    text-align: right;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.extended .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;       
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+
+.extended .city {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 3.6vh;   
+    bottom: 77%;
+    left: 12.5%;
+}
+
+.extended .name1 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 64.5%;
+    left: 15.7%;
+}
+
+.extended .phrase1_img {
+    position: absolute;
+    bottom: 48%;
+    left: 20.7%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase1 {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 3.5vh;
+    top: 60.5%;
+    left: 16.3%;
+    max-width: 20%;
+}
+
+.extended .high1 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 20%;
+    right: 84.5%;
+    color: rgb(225, 214, 124);
+}
+
+.extended .slash1 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 20%;
+    left: 16.3%;
+    transform: translateX(-50%);
+    color: rgb(225, 214, 124);
+}
+
+.extended .low1 {
+    position: absolute;
+    text-align: left;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: left;
+    bottom: 20%;
+    left: 17%;
+}
+
+.extended .name2 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 64.5%;
+    left: 32%;
+}
+
+.extended .phrase2_img {
+    position: absolute;
+    bottom: 48%;
+    left: 37.1%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase2 {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 3.5vh;
+    top: 60.5%;
+    left: 32.6%;
+    max-width: 20%;
+}
+
+.extended .high2 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 20%;
+    right: 68.5%;
+    color: rgb(225, 214, 124);
+}
+
+.extended .slash2 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 20%;
+    left: 32.3%;
+    transform: translateX(-50%);
+    color: rgb(225, 214, 124);
+}
+
+.extended .low2 {
+    position: absolute;
+    text-align: left;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: left;
+    bottom: 20%;
+    left: 33%;
+}
+
+.extended .name3 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 64.5%;
+    left: 48.3%;
+}
+
+.extended .phrase3_img {
+    position: absolute;
+    bottom: 48%;
+    left: 53.4%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase3 {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 3.5vh;
+    top: 60.5%;
+    left: 49%;
+    max-width: 20%;
+}
+
+.extended .high3 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 20%;
+    right: 52.2%;
+    color: rgb(225, 214, 124);
+}   
+
+.extended .slash3 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 20%;
+    left: 48.6%;
+    transform: translateX(-50%);
+    color: rgb(225, 214, 124);
+}
+
+.extended .low3 {
+    position: absolute;
+    text-align: left;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: left;
+    bottom: 20%;
+    left: 49.3%;
+}
+
+.extended .name4 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 64.5%;
+    left: 64.75%;
+}
+
+.extended .phrase4_img {
+    position: absolute;
+    bottom: 48%;
+    left: 69.8%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase4 {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 3.5vh;
+    top: 60.5%;
+    left: 65.5%;
+    max-width: 20%;
+}
+
+.extended .high4 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 20%;
+    right: 35%;
+    color: rgb(225, 214, 124);
+}
+
+.extended .slash4 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 20%;
+    left: 65.8%;
+    transform: translateX(-50%);
+    color: rgb(225, 214, 124);
+}
+
+.extended .low4 {
+    position: absolute;
+    text-align: left;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: left;
+    bottom: 20%;
+    left: 66.4%;
+}
+
+.extended .name5 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 64.5%;
+    left: 81.6%;
+}
+
+.extended .phrase5_img {
+    position: absolute;
+    bottom: 48%;
+    left: 86.65%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase5 {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 3.5vh;
+    top: 60.5%;
+    left: 82.45%;
+    max-width: 20%;
+}
+
+.extended .high5 {
+    position: absolute;
+    text-align: right;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: right;
+    bottom: 20%;
+    right: 18.1%;
+    color: rgb(225, 214, 124);
+}
+
+.extended .slash5 {
+    position: absolute;
+    text-align: center;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: center;
+    bottom: 20%;
+    left: 82.7%;
+    transform: translateX(-50%);
+    color: rgb(225, 214, 124);
+}
+
+.extended .low5 {
+    position: absolute;
+    text-align: left;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Condensed', sans-serif;
+    font-size: 9vh;
+    transform-origin: left;
+    bottom: 20%;
+    left: 83.4%;
+}
+
+/* Main container, center content using transform, maintain 4:3 aspect ratio, and full height */
+#main {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    width: calc(100vh * (4 / 3)); /* Adjust width to maintain 4:3 aspect ratio */
+    height: 100vh; /* Full height of the browser */
+    will-change: transform;
+}
+
+/* UpNext package list styling */
+.upnext {
+    position: absolute;
+    top: 22%;
+    z-index: 5;
+}
+
+/* UpNext package list styling - update specificity */
+.slide .upnext_item {
+    position: relative;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4vh;
+    transform: scaleY(0.99) scaleX(0.8) translateX(-50%) !important;
+    left: -10%;
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+    margin-bottom: 3vh;
+    display: block;
+    color: rgb(225, 214, 124);
+}
+
+.slide .upnext_item.upnext_item-current {
+    color: #f2f2f2;
+    opacity: 1;
+}
+
+.slide .upnext_item.upnext_item-current::before {
+    content: '►';
+    position: absolute;
+    left: -11%;
+    color: #f2f2f2;
+}
+
+/* Bulletin Alert Styles */
+#bulletin-overlay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vh * (4 / 3));
+    height: 100vh;
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+    overflow: hidden;
+}
+
+#bulletin-overlay img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.marquee {
+    position: absolute;
+    color:  #f2f2f2;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.5vh;
+    white-space: nowrap;
+    width: 126%;
+    bottom: 6.5%;
+    right: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    transform: scaleY(0.99) scaleX(0.8);
+    transform-origin: right center;
+    overflow: hidden;
+    text-align: right;
+    display: inline-block;
+}
+
+/* Remove the old animation keyframes since we're using jQuery Marquee now */
+#bulletin-phenomenon {
+    position: absolute;
+    color:  #f2f2f2;
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 3.3vh;
+    white-space: nowrap;
+    left: 12%;
+    bottom: 14.5%;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes scrollText {
+    from {
+        transform: translateX(0) scaleY(0.99) scaleX(0.8);
+    }
+    to {
+        transform: translateX(calc(-100% - 50vw)) scaleY(0.99) scaleX(0.8);
+    }
+}
+
+/* Classes for Almanac */
+.almanac {
+    z-index: 5;
+    display: inline-block;
+    text-align: right;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.almanac .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;       
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+
+.almanac .sunriseLabel {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 68.5%;
+    left: 22.8%;
+}
+
+.almanac .sunsetLabel {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 60.5%;
+    left: 22.1%;
+}
+
+.almanac .dow1 {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 3.75vh;
+    bottom: 76%;
+    left: 45.8%;
+    color: rgb(225, 214, 124);
+}
+
+.almanac .dow2 {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 3.75vh;
+    bottom: 76%;
+    left: 75.8%;
+    color: rgb(225, 214, 124);
+}
+
+.almanac .sunriseTime1 {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 68.5%;
+    left: 45.8%;
+}
+
+.almanac .sunsetTime1 {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 60.5%;
+    left: 45.8%;
+}
+
+.almanac .sunriseTime2 {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 68.5%;
+    left: 74.8%;
+}
+
+.almanac .sunsetTime2 {
+    position: absolute;
+    transform: translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 60.5%;
+    left: 74.8%;
+}
+
+.almanac .phase1 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4vh;
+    bottom: 24.5%;
+    left: 21%;
+}
+
+.almanac .phase1_img{
+    position: absolute;
+    bottom: 34.5%;
+    left: 18.5%;
+    transform: scale(1.8);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.almanac .phase2 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4vh;
+    bottom: 24.5%;
+    left: 40.5%;
+}
+
+.almanac .phase2_img{
+    position: absolute;
+    bottom: 34.5%;
+    left: 37.8%;
+    transform: scale(1.8);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.almanac .phase3 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4vh;
+    bottom: 24.5%;
+    left: 57.8%;
+}
+
+.almanac .phase3_img{
+    position: absolute;
+    bottom: 34.5%;
+    left: 55%;
+    transform: scale(1.8);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+
+.almanac .phase4 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4vh;
+    bottom: 24.5%;
+    left: 78.5%;
+}
+
+.almanac .phase4_img{
+    position: absolute;
+    bottom: 34.5%;
+    left: 76%;
+    transform: scale(1.8);
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.almanac .date1 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 19.5%;
+    left: 20.8%;
+    color: rgb(225, 214, 124);
+}
+
+.almanac .date2 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 19.5%;
+    left: 39.8%;
+    color: rgb(225, 214, 124);
+}
+
+.almanac .date3 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 19.5%;
+    left: 57.8%;
+    color: rgb(225, 214, 124);
+}
+
+.almanac .date4 {
+    position: absolute;
+    transform: scaleX(0.85) translateX(-50%) !important;
+    transform-origin: center;
+    text-align: center;
+    font-size: 4.5vh;
+    bottom: 19.5%;
+    left: 77.8%;
+    color: rgb(225, 214, 124);
+}

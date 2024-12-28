@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "express": "^4.21.2",
+    "mapbox-gl": "^3.9.0"
+  },
+  "name": "weatherscanlocal",
+  "version": "1.0.0",
+  "main": "client.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
