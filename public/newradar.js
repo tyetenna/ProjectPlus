@@ -74,7 +74,7 @@ async function loadMapSource(map, type, timestamp) {
             source: sourceId,
             layout: { visibility: 'none' },
             paint: {
-                'raster-opacity': 1,
+                'raster-opacity': 0.9,
                 'raster-fade-duration': 0,
                 'raster-brightness-max': type === 'sat' ? 1 : 0.9
             }

@@ -55,7 +55,16 @@ async function fetchTWCUserLocation(locationData) {
             return data;
         } catch (error) {
             console.error('Failed to fetch TWC user location:', error);
-            return null;
+            // Return a fallback object instead of null
+            return {
+                location: {
+                    locId: ['NA_' + lat + '_' + lon],
+                    latitude: [lat],
+                    longitude: [lon],
+                    displayName: ['Not Available'],
+                    adminDistrict: ['Not Available']
+                }
+            };
         }
     }
 }
@@ -187,12 +196,41 @@ async function populateCurrentObs() {
     // Fetch all current observations in parallel
     const fetchPromises = locations.map(async location => {
         const apiUrl = `https://api.weather.com/v3/wx/observations/current?geocode=${location.lat},${location.lon}&units=e&language=en-US&format=json&apiKey=${apiKey}`;
-        const data = await fetchCurrentObservations(apiUrl);
-        if (data) {
+        try {
+            const data = await fetchCurrentObservations(apiUrl);
+            if (data) {
+                currentObs[location.locId] = {
+                    city: location.city,
+                    state: location.state,
+                    ...data
+                };
+            } else {
+                // If data fetch fails, create a fallback object
+                currentObs[location.locId] = {
+                    city: 'Not Available',
+                    state: 'Not Available',
+                    temperature: '--',
+                    windSpeed: '--',
+                    windDirectionCardinal: '--',
+                    relativeHumidity: '--',
+                    windGust: '--',
+                    wxPhraseMedium: 'Data Unavailable',
+                    iconCode: 44
+                };
+            }
+        } catch (error) {
+            console.error(`Failed to fetch observations for ${location.city}:`, error);
+            // Same fallback object on error
             currentObs[location.locId] = {
-                city: location.city,
-                state: location.state,
-                ...data
+                city: 'Not Available',
+                state: 'Not Available',
+                temperature: '--',
+                windSpeed: '--',
+                windDirectionCardinal: '--',
+                relativeHumidity: '--',
+                windGust: '--',
+                wxPhraseMedium: 'Data Unavailable',
+                iconCode: 44
             };
         }
     });
@@ -356,7 +394,10 @@ async function populateBulletins() {
         
         if (headlinesData && headlinesData.alerts && headlinesData.alerts.length > 0) {
             // Sort all alerts by significance
-            const sortedAlerts = [...headlinesData.alerts].sort((a, b) => 
+            const sortedAlerts = [...headlinesData.alerts].map(alert => ({
+                ...alert,
+                significance: alert.significance === 'S' ? 'Y' : alert.significance
+            })).sort((a, b) => 
                 getSeverityOrder(b.significance) - getSeverityOrder(a.significance)
             );
 
@@ -370,7 +411,7 @@ async function populateBulletins() {
                     locationBulletins.push({
                         source: detailData.alertDetail.source,
                         phenomena: detailData.alertDetail.phenomena,
-                        significance: detailData.alertDetail.significance,
+                        significance: detailData.alertDetail.significance === 'S' ? 'Y' : detailData.alertDetail.significance,
                         messageType: detailData.alertDetail.messageType,
                         eventDescription: detailData.alertDetail.eventDescription,
                         headlineText: detailData.alertDetail.headlineText,
@@ -396,11 +437,141 @@ async function refreshData() {
 const dataPopulationPromise = new Promise(async (resolve, reject) => {
     try {
         await populateCurrentObs();
+        
+        // Set default data if primary location wasn't populated
+        if (!primaryLoc.locId || !currentObs[primaryLoc.locId]) {
+            primaryLoc = {
+                locId: 'DEFAULT',
+                city: 'Not Available',
+                state: 'Not Available',
+                lat: 0,
+                lon: 0
+            };
+            currentObs[primaryLoc.locId] = {
+                city: 'Not Available',
+                state: 'Not Available',
+                temperature: '--',
+                windSpeed: '--',
+                windDirectionCardinal: '--',
+                relativeHumidity: '--',
+                windGust: '--',
+                wxPhraseMedium: 'Data Unavailable',
+                iconCode: 44,
+                pressureAltimeter: '--'
+            };
+
+            // Add default 36-hour forecast data
+            thirtysixHour[primaryLoc.locId] = {
+                city: 'Not Available',
+                state: 'Not Available',
+                periods: [
+                    { name: 'Not Available', narrative: 'Forecast data currently unavailable.' },
+                    { name: 'Not Available', narrative: 'Forecast data currently unavailable.' },
+                    { name: 'Not Available', narrative: 'Forecast data currently unavailable.' }
+                ]
+            };
+
+            // Add default 7-day forecast data
+            sevenDay[primaryLoc.locId] = {
+                city: 'Not Available',
+                state: 'Not Available',
+                days: Array(7).fill({
+                    high: '--',
+                    low: '--',
+                    name: 'N/A',
+                    icon: 44,
+                    phrase: 'NOT AVAILABLE'
+                })
+            };
+
+            // Add default almanac data
+            almanac[primaryLoc.locId] = {
+                0: {
+                    dayOfWeek: 'N/A',
+                    sunrise: '--:-- am',
+                    sunset: '--:-- pm'
+                },
+                1: {
+                    dayOfWeek: 'N/A',
+                    sunrise: '--:-- am',
+                    sunset: '--:-- pm'
+                },
+                moonPhases: Array(4).fill({
+                    phaseName: 'N/A',
+                    date: 'N/A'
+                })
+            };
+        }
+
         await populateForecasts();
         await populateBulletins();
         resolve();
     } catch (error) {
-        reject(error);
+        console.error('Error during data population:', error);
+        // Use the same default data structure as above
+        // Set default data even on error
+        primaryLoc = {
+            locId: 'DEFAULT',
+            city: 'Not Available',
+            state: 'Not Available',
+            lat: 0,
+            lon: 0
+        };
+        
+        // Set all default data structures here too
+        currentObs[primaryLoc.locId] = {
+            city: 'Not Available',
+            state: 'Not Available',
+            temperature: '--',
+            windSpeed: '--',
+            windDirectionCardinal: '--',
+            relativeHumidity: '--',
+            windGust: '--',
+            wxPhraseMedium: 'Data Unavailable',
+            iconCode: 44,
+            pressureAltimeter: '--'
+        };
+        
+        thirtysixHour[primaryLoc.locId] = {
+            city: 'Not Available',
+            state: 'Not Available',
+            periods: [
+                { name: 'Not Available', narrative: 'Forecast data currently unavailable.' },
+                { name: 'Not Available', narrative: 'Forecast data currently unavailable.' },
+                { name: 'Not Available', narrative: 'Forecast data currently unavailable.' }
+            ]
+        };
+
+        sevenDay[primaryLoc.locId] = {
+            city: 'Not Available',
+            state: 'Not Available',
+            days: Array(7).fill({
+                high: '--',
+                low: '--',
+                name: 'N/A',
+                icon: 44,
+                phrase: 'NOT AVAILABLE'
+            })
+        };
+
+        almanac[primaryLoc.locId] = {
+            0: {
+                dayOfWeek: 'N/A',
+                sunrise: '--:-- am',
+                sunset: '--:-- pm'
+            },
+            1: {
+                dayOfWeek: 'N/A',
+                sunrise: '--:-- am',
+                sunset: '--:-- pm'
+            },
+            moonPhases: Array(4).fill({
+                phaseName: 'N/A',
+                date: 'N/A'
+            })
+        };
+
+        resolve(); // Resolve with default data instead of rejecting
     }
 });
 

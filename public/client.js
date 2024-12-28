@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         bulletinImage.src = `./images/Plus_Bulletin_${highestAlert.significance}.png`;
         
         // Set text based on significance
-        const text = highestAlert.significance === 'W' ? 
+        const text = highestAlert.significance === 'W' ||  highestAlert.eventDescription === "Special Weather Statement" ? 
             highestAlert.description.toUpperCase() : 
             highestAlert.brief;
         

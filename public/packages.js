@@ -46,6 +46,43 @@ const Core = async (locale) => {
         throw new Error('Locale is not defined');
     }
 
+    // Verify that primary location data exists
+    if (!primaryLoc.locId || !currentObs[primaryLoc.locId]) {
+        console.error('Primary location data not available');
+        // Set default data
+        primaryLoc.locId = 'DEFAULT';
+        currentObs[primaryLoc.locId] = {
+            city: 'Not Available',
+            state: 'Not Available',
+            temperature: '--',
+            windSpeed: '--',
+            windDirectionCardinal: '--',
+            relativeHumidity: '--',
+            windGust: '--',
+            wxPhraseMedium: 'Data Unavailable',
+            iconCode: 44,
+            pressureAltimeter: '--'
+        };
+    }
+
+    // Ensure nearbyLocs has enough entries with default data
+    while (nearbyLocs.length < 8) {
+        const defaultLocId = `DEFAULT_${nearbyLocs.length}`;
+        nearbyLocs.push({
+            locId: defaultLocId,
+            city: 'Not Available',
+            state: 'Not Available'
+        });
+        currentObs[defaultLocId] = {
+            city: 'Not Available',
+            state: 'Not Available',
+            temperature: '--',
+            windSpeed: '--',
+            windDirectionCardinal: '--',
+            iconCode: 44
+        };
+    }
+
     // Get package context for the UpNext slide
     const context = getPackageContext('Core');
     
