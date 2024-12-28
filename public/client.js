@@ -75,6 +75,7 @@ const createSlideElements = (slides, ldlElement) => {
                     if (field.imgSrc) {
                         const imgElement = document.createElement('img');
                         imgElement.src = field.imgSrc;
+                        imgElement.id = `${field.id}_img`;
                         imgElement.classList.add(`${field.className.split(' ')[0]}_img`);
                         fieldsElement.appendChild(imgElement);
                     }
@@ -331,8 +332,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Function to update bulletin display
     const updateBulletin = () => {
         // Check if bulletins array is empty for the location
-        if (!primaryLoc?.locId || !bulletins[primaryLoc.locId]?.length || bulletinOverlay.style.display === 'block') {
-            console.log('No bulletins detected or bulletin already visible, hiding overlay...');
+        const hasValidLocationId = primaryLoc?.locId;
+        const hasBulletins = bulletins[primaryLoc?.locId]?.length > 0;
+        const isOverlayVisible = bulletinOverlay.style.display === 'block';
+
+        // Store previous bulletin info to check for changes
+        const previousBulletin = isOverlayVisible ? bulletinText.textContent : null;
+
+        if ((!hasValidLocationId || !hasBulletins) && isOverlayVisible) {
+            console.log('No bulletins detected, hiding overlay...');
             bulletinOverlay.style.display = 'none';
             return;
         }
@@ -374,6 +382,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     delayBeforeStart: 1000
                 });
         });
+
+        // Play warning beep if bulletin wasn't visible before or text changed
+        if ((!isOverlayVisible || text !== previousBulletin) && hasBulletins && highestAlert.significance === 'W') {
+            const audio = new Audio('./warningbeep.wav');
+            audio.play();
+        }
 
         bulletinOverlay.style.display = 'block';
     };

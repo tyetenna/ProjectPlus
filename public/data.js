@@ -637,7 +637,7 @@ async function updateFieldsWithNewData() {
             field.textContent = value;
             // console.log(`Updated field: ${fieldId} with value: ${value}`);
             if (dataType === 'wxPhraseMedium') {
-                const imgElement = document.querySelector(`#${fieldId} + img.text-icon`);
+                const imgElement = document.querySelector(`#${fieldId}_img`);
                 if (imgElement) {
                     imgElement.src = `./images/wxicons/${currentObs[locationId].iconCode}.png`;
                     // console.log(`Updated image src for field: ${fieldId} with src: ./images/wxicons/${currentObs[locationId].iconCode}.png`);
@@ -661,7 +661,11 @@ async function updateFieldsWithNewData() {
             } else if (dataType === 'low') {
                 value = sevenDay[locationId].days[part].low;
             } else if (dataType === 'icon') {
-                value = sevenDay[locationId].days[part].icon;
+                const imgElement = document.querySelector(`#${fieldId}_img`);
+                if (imgElement) {
+                    imgElement.src = `./images/wxicons/${currentObs[locationId].iconCode}.png`;
+                    // console.log(`Updated image src for field: ${fieldId} with src: ./images/wxicons/${sevenDay[locationId].days[part].icon}.png`);
+                }
             } else if (dataType === 'phrase') {
                 value = sevenDay[locationId].days[part].phrase;
             }

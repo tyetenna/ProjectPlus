@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     // Set the audio volume to 40%
-    audioElement.volume = 0.4;
+    audioElement.volume = 0.3;
     // Fetch the list of music files from the server
     fetch('/music')
         .then(response => response.json())
