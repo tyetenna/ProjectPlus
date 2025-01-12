@@ -343,6 +343,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('No bulletins detected, hiding overlay...');
             bulletinOverlay.style.display = 'none';
             return;
+        } else if (!hasValidLocationId || !hasBulletins){
+            return;
         }
 
         console.log('Bulletin detected, updating overlay...');

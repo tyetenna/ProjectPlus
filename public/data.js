@@ -428,7 +428,33 @@ async function populateBulletins() {
     }
 }
 
+// Add this function after the variable declarations
+function cleanupOldData() {
+    // Keep only the last hour of bulletins
+    for (const locId in bulletins) {
+        if (bulletins[locId].length > 10) {
+            bulletins[locId] = bulletins[locId].slice(-10);
+        }
+    }
+    
+    // Clean up observation data for removed locations
+    const validLocIds = new Set(locations.map(loc => loc.locId));
+    for (const locId in currentObs) {
+        if (!validLocIds.has(locId)) {
+            delete currentObs[locId];
+            delete thirtysixHour[locId];
+            delete sevenDay[locId];
+            delete almanac[locId];
+            delete bulletins[locId];
+        }
+    }
+}
+
+// Modify refreshData function
 async function refreshData() {
+    // Clean up old data before fetching new data
+    cleanupOldData();
+    
     await populateCurrentObs();
     await populateForecasts();
     await populateBulletins();
@@ -636,7 +662,7 @@ async function updateFieldsWithNewData() {
             }
             field.textContent = value;
             // console.log(`Updated field: ${fieldId} with value: ${value}`);
-            if (dataType === 'wxPhraseMedium') {
+            if (dataType === 'wxPhraseMedium' || 'city') {
                 const imgElement = document.querySelector(`#${fieldId}_img`);
                 if (imgElement) {
                     imgElement.src = `./images/wxicons/${currentObs[locationId].iconCode}.png`;

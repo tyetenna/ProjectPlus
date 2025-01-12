@@ -48,6 +48,30 @@ async function fetchTimestamps(type) {
     }
 }
 
+function cleanupOldSources(map, type) {
+    const timestamps = type === 'sat' ? state.satTimestamps : state.radarTimestamps;
+    const sourceCache = state.loadedSources[type];
+    
+    // Get all sources of this type from the map
+    const sources = Object.keys(map.getStyle().sources)
+        .filter(id => id.startsWith(`${type}_`));
+    
+    // Remove sources and layers that are no longer in the timestamps
+    sources.forEach(sourceId => {
+        const timestamp = sourceId.split('_')[1];
+        if (!timestamps.includes(Number(timestamp))) {
+            const layerId = `${type}layer_${timestamp}`;
+            if (map.getLayer(layerId)) {
+                map.removeLayer(layerId);
+            }
+            if (map.getSource(sourceId)) {
+                map.removeSource(sourceId);
+            }
+            sourceCache.delete(Number(timestamp));
+        }
+    });
+}
+
 async function loadMapSource(map, type, timestamp) {
     const sourceId = `${type}_${timestamp}`;
     const layerId = `${type}layer_${timestamp}`;
@@ -67,31 +91,41 @@ async function loadMapSource(map, type, timestamp) {
     }
 
     if (!map.getSource(sourceId)) {
-        map.addSource(sourceId, sourceCache.get(timestamp));
-        map.addLayer({
-            id: layerId,
-            type: 'raster',
-            source: sourceId,
-            layout: { visibility: 'none' },
-            paint: {
-                'raster-opacity': 0.9,
-                'raster-fade-duration': 0,
-                'raster-brightness-max': type === 'sat' ? 1 : 0.9
-            }
-        });
-
-        // Wait for source to load
-        await new Promise(resolve => {
-            const checkLoaded = () => {
-                if (map.isSourceLoaded(sourceId)) {
-                    resolve();
-                } else {
-                    map.once('sourcedata', checkLoaded);
+        try {
+            map.addSource(sourceId, sourceCache.get(timestamp));
+            map.addLayer({
+                id: layerId,
+                type: 'raster',
+                source: sourceId,
+                layout: { visibility: 'none' },
+                paint: {
+                    'raster-opacity': 0.9,
+                    'raster-fade-duration': 0,
+                    'raster-brightness-max': type === 'sat' ? 1 : 0.9
                 }
-            };
-            checkLoaded();
-        });
+            });
+
+            // Wait for source to load with timeout
+            await Promise.race([
+                new Promise(resolve => {
+                    const checkLoaded = () => {
+                        if (map.isSourceLoaded(sourceId)) {
+                            resolve();
+                        } else {
+                            map.once('sourcedata', checkLoaded);
+                        }
+                    };
+                    checkLoaded();
+                }),
+                new Promise(resolve => setTimeout(resolve, 5000)) // 5 second timeout
+            ]);
+        } catch (e) {
+            console.debug(`Error loading source ${sourceId}:`, e);
+        }
     }
+
+    // Add cleanup after loading new sources
+    cleanupOldSources(map, type);
 }
 
 async function initializeMapLayers(map) {
@@ -116,27 +150,53 @@ function smoothAnimationLoop(map, timestamps) {
 
     const validLayers = timestamps
         .map(ts => `${layerPrefix}${ts}`)
-        .filter(layerId => map.getLayer(layerId));
+        .filter(layerId => {
+            try {
+                return map.getLayer(layerId);
+            } catch (e) {
+                return false;
+            }
+        });
 
-    if (validLayers.length === 0) return;
+    if (validLayers.length === 0) {
+        console.log('No valid layers found, waiting for initialization...');
+        // Try again in a short moment if no layers are ready
+        setTimeout(() => {
+            if (map.loaded()) {
+                startRadarAnimation(map);
+            }
+        }, 500);
+        return;
+    }
 
     let currentIndex = 0;
-    let shouldAnimate = true;
+    let shouldAnimate = true;  
+
+    // Safely set layer visibility
+    const setLayerVisibility = (layerId, visibility) => {
+        try {
+            if (map.getLayer(layerId)) {
+                map.setLayoutProperty(layerId, 'visibility', visibility);
+            }
+        } catch (e) {
+            console.debug(`Layer ${layerId} not ready`);
+        }
+    };
 
     // Initially hide all layers
     validLayers.forEach(layerId => {
-        map.setLayoutProperty(layerId, 'visibility', 'none');
+        setLayerVisibility(layerId, 'none');
     });
 
     // Show first frame
-    map.setLayoutProperty(validLayers[0], 'visibility', 'visible');
+    setLayerVisibility(validLayers[0], 'visible');
 
     const observer = new IntersectionObserver((entries) => {
         shouldAnimate = entries[0].isIntersecting;
         if (!shouldAnimate) {
             clearInterval(state.animationInterval);
             validLayers.forEach(layerId => {
-                map.setLayoutProperty(layerId, 'visibility', 'none');
+                setLayerVisibility(layerId, 'none');
             });
         }
     });
@@ -145,21 +205,25 @@ function smoothAnimationLoop(map, timestamps) {
     state.animationInterval = setInterval(() => {
         if (!shouldAnimate || !container.offsetParent) return;
 
-        map.setLayoutProperty(validLayers[currentIndex], 'visibility', 'none');
-        currentIndex = (currentIndex + 1) % validLayers.length;
-        map.setLayoutProperty(validLayers[currentIndex], 'visibility', 'visible');
+        try {
+            setLayerVisibility(validLayers[currentIndex], 'none');
+            currentIndex = (currentIndex + 1) % validLayers.length;
+            setLayerVisibility(validLayers[currentIndex], 'visible');
 
-        if (currentIndex === validLayers.length - 1) {
-            shouldAnimate = false;
-            setTimeout(() => {
-                if (container.offsetParent) {
-                    shouldAnimate = true;
-                    currentIndex = 0;
-                    validLayers.forEach((layerId, i) => {
-                        map.setLayoutProperty(layerId, 'visibility', i === 0 ? 'visible' : 'none');
-                    });
-                }
-            }, 1650);
+            if (currentIndex === validLayers.length - 1) {
+                shouldAnimate = false;
+                setTimeout(() => {
+                    if (container.offsetParent) {
+                        shouldAnimate = true;
+                        currentIndex = 0;
+                        validLayers.forEach((layerId, i) => {
+                            setLayerVisibility(layerId, i === 0 ? 'visible' : 'none');
+                        });
+                    }
+                }, 1650);
+            }
+        } catch (e) {
+            console.debug('Animation frame error, continuing...', e);
         }
     }, 100);
 
@@ -170,7 +234,7 @@ function smoothAnimationLoop(map, timestamps) {
             state.animationInterval = null;
         }
         validLayers.forEach(layerId => {
-            map.setLayoutProperty(layerId, 'visibility', 'none');
+            setLayerVisibility(layerId, 'none');
         });
     };
 }
@@ -278,6 +342,18 @@ export async function initializeMaps() {
 
     startTimestampRefresh();
     return state.maps;
+}
+
+// Add cleanup function for map instances
+export function cleanupMap(mapId) {
+    const map = state.maps.get(mapId);
+    if (map) {
+        if (map.getContainer()._cleanup) {
+            map.getContainer()._cleanup();
+        }
+        map.remove();
+        state.maps.delete(mapId);
+    }
 }
 
 // Add periodic timestamp refresh
