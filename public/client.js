@@ -2,6 +2,27 @@ import { locale, affiliateName, enabledPackages } from './config.js';
 import { dataPopulationPromise, currentObs, primaryLoc, bulletins, refreshData, updateFieldsWithNewData } from './data.js';
 import { initializeMaps, maps, startRadarAnimation} from './newradar.js';
 import { initializePackages } from './packages.js';
+import { getMusicElement, duckVolume, restoreVolume } from './music.js';
+
+// Function to handle vocal audio playback
+async function playVocalAudio(slideId) {
+    try {
+        const vocalAudio = new Audio(`./audio/${slideId}.wav`);
+        const originalVolume = duckVolume();
+
+        // Play the vocal track
+        await vocalAudio.play();
+
+        // Wait for vocal track to finish
+        vocalAudio.onended = () => {
+            restoreVolume(originalVolume);
+        };
+    } catch (error) {
+        console.error(`Error playing vocal audio for slide ${slideId}:`, error);
+        // Ensure music volume is restored even if there's an error
+        restoreVolume(0.3); // Restore to default volume
+    }
+}
 
 // Function to create and append slide elements
 const createSlideElements = (slides, ldlElement) => {
@@ -200,7 +221,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         newSlide.classList.add('active'); // Show the current slide
         newSlide.style.zIndex = '2'; // Bring the current slide to the front
 
-
+        // Check if the slide has vocallocal enabled
+        if (slides[index].vocallocal) {
+            playVocalAudio(slides[index].id);
+        }
 
         // Remove 'active' from other slides after the transition
         setTimeout(() => {
@@ -408,6 +432,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Replace the original refresh function
     refreshDataAndSlides = refreshDataAndSlidesWithBulletin;
+
+    // Initialize background music
+    const backgroundMusic = getMusicElement();
+    try {
+        await backgroundMusic.play();
+    } catch (error) {
+        console.error('Error playing background music:', error);
+    }
 
 });
 

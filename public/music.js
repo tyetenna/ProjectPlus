@@ -1,8 +1,30 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const musicFiles = [];
-    let currentTrackIndex = 0;
-    const audioElement = new Audio();
+const musicFiles = [];
+let currentTrackIndex = 0;
+const audioElement = new Audio();
 
+// Expose the audio element and volume control methods
+const getMusicElement = () => audioElement;
+const duckVolume = () => {
+    const currentVolume = audioElement.volume;
+    const targetVolume = 0.06;
+    const steps = 10;
+    const stepTime = 20; // milliseconds
+    const volumeStep = (currentVolume - targetVolume) / steps;
+
+    let step = 0;
+    const fadeInterval = setInterval(() => {
+        step++;
+        audioElement.volume = currentVolume - (volumeStep * step);
+        if (step >= steps) clearInterval(fadeInterval);
+    }, stepTime);
+
+    return currentVolume;
+};
+const restoreVolume = (originalVolume) => {
+    audioElement.volume = originalVolume;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
     // Function to shuffle an array
     const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
@@ -10,8 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
             [array[i], array[j]] = [array[j], array[i]];
         }
     };
-    // Set the audio volume to 40%
+
+    // Set the audio volume to 30%
     audioElement.volume = 0.3;
+
     // Fetch the list of music files from the server
     fetch('/music')
         .then(response => response.json())
@@ -50,3 +74,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // console.log('M4A:', audioElement.canPlayType('audio/mp4'));
     // console.log('OGG:', audioElement.canPlayType('audio/ogg'));
 });
+
+export { getMusicElement, duckVolume, restoreVolume };

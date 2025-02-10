@@ -96,10 +96,10 @@ const Core = async (locale) => {
 
     const slides = [
         { id: 'UpNext', src: './images/background/' + locale + '/upnext.png', text: 'Up Next...', noFade: true, duration: 6, slide: null, overlay: './images/Plus_UpNext.png', fields: upNextFields},
-        { id: 'Radar', src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'Radar', src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', vocallocal: false,fields: [
             { id: 'radarMapContainer', className: 'map-container', dataType: 'local_Radar' } 
         ] },
-        { id: 'Now', src: './images/background/' + locale + '/now.png', text: 'Current Conditions', noFade: true, duration: 10, slide: './images/Slide_Now.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'Now', src: './images/background/' + locale + '/now.png', text: 'Current Conditions', noFade: true, duration: 10, slide: './images/Slide_Now.png', overlay: './images/Plus_Product.png', vocallocal: true, fields: [
             { text: currentObs[primaryLoc.locId].city, id: 'nowCity', className: 'city', dataType:"city", imgSrc: null },
             { text: currentObs[primaryLoc.locId].relativeHumidity + "%", id: 'nowHumidity', className: 'humidity', dataType:"relativeHumidity", imgSrc: null },
             { text: currentObs[primaryLoc.locId].pressureAltimeter, id: 'nowPressure', className: 'pressure', dataType:"pressureAltimeter", imgSrc: null },
@@ -108,7 +108,7 @@ const Core = async (locale) => {
             { text: currentObs[primaryLoc.locId].temperature, id: 'nowTemperature', className: 'temperature', dataType:"temperature", imgSrc: null },
             { text: currentObs[primaryLoc.locId].wxPhraseMedium, id: 'nowCondition', className: 'condition', dataType:"wxPhraseMedium", imgSrc: `./images/wxicons/${currentObs[primaryLoc.locId].iconCode}.png` }
         ] },
-        { id: 'Nearby1', src: './images/background/' + locale + '/nearby.png', text: 'Current Conditions', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'Nearby1', src: './images/background/' + locale + '/nearby.png', text: 'Current Conditions', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: false,fields: [
             { text: "TEMP", id: 'nearTempLabel', className: 'tempLabel', imgSrc: null },
             { text: "WIND", id: 'nearWindLabel', className: 'windLabel', imgSrc: null },
             // Nearby City 1
@@ -132,7 +132,7 @@ const Core = async (locale) => {
             { text: currentObs[nearbyLocs[3].locId].windDirectionCardinal, id: 'nearWindDir4', className: 'windDir_4', dataType:"windDirectionCardinal", imgSrc: null },
             { text: currentObs[nearbyLocs[3].locId].windSpeed, id: 'nearWindSpeed4', className: 'windSpeed_4', dataType:"windSpeed", imgSrc: null },
         ] },
-        { id: 'Nearby2', src: './images/background/' + locale + '/nearby.png', text: 'Current Conditions', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', fields:[
+        { id: 'Nearby2', src: './images/background/' + locale + '/nearby.png', text: 'Current Conditions', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: false,fields:[
             { text: "TEMP", id: 'nearTempLabel', className: 'tempLabel', imgSrc: null },
             { text: "WIND", id: 'nearWindLabel', className: 'windLabel', imgSrc: null },
             // Nearby City 5
@@ -156,27 +156,27 @@ const Core = async (locale) => {
             { text: currentObs[nearbyLocs[7].locId].windDirectionCardinal, id: 'nearWindDir8', className: 'windDir_4', dataType:"windDirectionCardinal", imgSrc: null },
             { text: currentObs[nearbyLocs[7].locId].windSpeed, id: 'nearWindSpeed8', className: 'windSpeed_4', dataType:"windSpeed", imgSrc: null },
         ] },
-        { id: 'Radar2', src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'Radar2', src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', vocallocal: false,fields: [
             // Add a container for the radar map
             { id: 'radarMapContainer', className: 'map-container', dataType: 'local_Radar' } // Added dataType "Radar"
         ] },
-        { id: 'thirtysixHour1', src: './images/background/' + locale + '/36hr.png', text: '36 Hour Forecast', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'thirtysixHour1', src: './images/background/' + locale + '/36hr.png', text: '36 Hour Forecast', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: true, fields: [
                 { text: "National Weather Service", id: '36hrNWS', className: 'nws', imgSrc: null },
                 { text: thirtysixHour[primaryLoc.locId].periods[0].name, id: '36hrName1', className: 'name', dataType:"name_0", imgSrc: null },
                 { text: thirtysixHour[primaryLoc.locId].periods[0].narrative, id: '36hrNarrative1', className: 'narrative', dataType:"narrative_0", imgSrc: null }
             ]
         },
-        { id: 'thirtysixHour2', src: './images/background/' + locale + '/36hr.png', text: '36 Hour Forecast', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', fields:[
+        { id: 'thirtysixHour2', src: './images/background/' + locale + '/36hr.png', text: '36 Hour Forecast', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: false, fields:[
             { text: "National Weather Service", id: '36hrNWS', className: 'nws', imgSrc: null },
             { text: thirtysixHour[primaryLoc.locId].periods[1].name, id: '36hrName2', className: 'name', dataType:"name_1", imgSrc: null },
             { text: thirtysixHour[primaryLoc.locId].periods[1].narrative, id: '36hrNarrative2', className: 'narrative', dataType:"narrative_1", imgSrc: null },
         ] },
-        { id: 'thirtysixHour3', src: './images/background/' + locale + '/36hr.png', text: '36 Hour Forecast', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', fields:[
+        { id: 'thirtysixHour3', src: './images/background/' + locale + '/36hr.png', text: '36 Hour Forecast', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: false,fields:[
             { text: "National Weather Service", id: '36hrNWS', className: 'nws', imgSrc: null },
             { text: thirtysixHour[primaryLoc.locId].periods[2].name, id: '36hrName3', className: 'name', dataType:"name_2", imgSrc: null },
             { text: thirtysixHour[primaryLoc.locId].periods[2].narrative, id: '36hrNarrative3', className: 'narrative', dataType:"narrative_2", imgSrc: null },
         ] },
-        { id: 'Extended', src: './images/background/' + locale + '/extended.png', text: 'Extended Forecast', noFade: false, duration: 10, slide: './images/Slide_Extended.png', overlay: './images/Plus_Product.png', fields:[
+        { id: 'Extended', src: './images/background/' + locale + '/extended.png', text: 'Extended Forecast', noFade: false, duration: 10, slide: './images/Slide_Extended.png', overlay: './images/Plus_Product.png', vocallocal: false,fields:[
             { text: sevenDay[primaryLoc.locId].city, id: 'extCity', className: 'city', dataType:"city", imgSrc: null },
             // Day 1
             { text: sevenDay[primaryLoc.locId].days[0].name, id: 'extName1', className: 'name1', dataType:"name_0", imgSrc: null },
@@ -209,7 +209,7 @@ const Core = async (locale) => {
             { text: sevenDay[primaryLoc.locId].days[4].low, id: 'extLow5', className: 'low5', dataType:"low_4", imgSrc: null },
             { text: sevenDay[primaryLoc.locId].days[4].phrase, id: 'extPhrase5', className: 'phrase5', dataType:"phrase_4", imgSrc: `./images/wxicons/${sevenDay[primaryLoc.locId].days[4].icon}.png` },
         ]},
-        { id: 'Almanac', src: './images/background/' + locale + '/almanac.png', text: 'Almanac', noFade: false, duration: 10, slide: './images/Slide_Almanac.png', overlay: './images/Plus_Product.png', fields:[
+        { id: 'Almanac', src: './images/background/' + locale + '/almanac.png', text: 'Almanac', noFade: false, duration: 10, slide: './images/Slide_Almanac.png', overlay: './images/Plus_Product.png', vocallocal: false,fields:[
             // Text Labels
             { text:"Sunrise", id: 'sunriseLabel', className: 'sunriseLabel', imgSrc: null },
             { text:"Sunset", id: 'sunsetLabel', className: 'sunsetLabel', imgSrc: null },
@@ -232,15 +232,15 @@ const Core = async (locale) => {
             { text:almanac[primaryLoc.locId].moonPhases[2].date, id: 'almDate3', className: 'date3', dataType: "date_2", imgSrc: null },
             { text:almanac[primaryLoc.locId].moonPhases[3].date, id: 'almDate4', className: 'date4', dataType: "date_3", imgSrc: null },
         ] },
-        { id: 'RegSat', src: './images/background/' + locale + '/almanac.png', text: 'Regional Satellite', noFade: true, duration: 20, slide: './images/Slide_Satellite.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'RegSat', src: './images/background/' + locale + '/almanac.png', text: 'Regional Satellite', noFade: true, duration: 20, slide: './images/Slide_Satellite.png', overlay: './images/Plus_Product.png', vocallocal: false,fields: [
             // Add a container for the radar map
             { id: 'radarMapContainer', className: 'map-container', dataType: 'regional_Sat' } 
         ] },
-        { id: 'RegRad', src: './images/background/' + locale + '/almanac.png', text: 'Regional Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'RegRad', src: './images/background/' + locale + '/almanac.png', text: 'Regional Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', vocallocal: false,fields: [
             // Add a container for the radar map
             { id: 'radarMapContainer', className: 'map-container', dataType: 'regional_Radar' } 
         ] },
-        { id: 'Radar3', src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', fields: [
+        { id: 'Radar3', src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', vocallocal: false,fields: [
             // Add a container for the radar map
             { id: 'radarMapContainer', className: 'map-container', dataType: 'local_Radar' } // Added dataType "Radar"
         ] }
