@@ -658,6 +658,26 @@ body {
     max-width: 20%;
 }
 
+.extended .phrase1_es_img {
+    position: absolute;
+    bottom: 48%;
+    left: 20.7%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase1_es {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 2.5vh;
+    top: 60.5%;
+    left: 16.3%;
+    max-width: 20%;
+}
+
 .extended .high1 {
     position: absolute;
     text-align: right;
@@ -716,6 +736,26 @@ body {
     transform-origin: left;
     text-align: center;
     font-size: 3.5vh;
+    top: 60.5%;
+    left: 32.6%;
+    max-width: 20%;
+}
+
+.extended .phrase2_es_img {
+    position: absolute;
+    bottom: 48%;
+    left: 37.1%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase2_es {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 2.5vh;
     top: 60.5%;
     left: 32.6%;
     max-width: 20%;
@@ -784,6 +824,26 @@ body {
     max-width: 20%;
 }
 
+.extended .phrase3_es_img {
+    position: absolute;
+    bottom: 48%;
+    left: 53.4%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase3_es {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 2.5vh;
+    top: 60.5%;
+    left: 49%;
+    max-width: 20%;
+}
+
 .extended .high3 {
     position: absolute;
     text-align: right;
@@ -842,6 +902,26 @@ body {
     transform-origin: left;
     text-align: center;
     font-size: 3.5vh;
+    top: 60.5%;
+    left: 65.5%;
+    max-width: 20%;
+}
+
+.extended .phrase4_es_img {
+    position: absolute;
+    bottom: 48%;
+    left: 69.8%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
+}
+
+.extended .phrase4_es {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 2.5vh;
     top: 60.5%;
     left: 65.5%;
     max-width: 20%;
@@ -908,6 +988,26 @@ body {
     top: 60.5%;
     left: 82.45%;
     max-width: 20%;
+}
+
+.extended .phrase5_es {
+    position: absolute;
+    transform: scaleX(0.8) translateX(-50%) !important;
+    transform-origin: left;
+    text-align: center;
+    font-size: 2.5vh;
+    top: 60.5%;
+    left: 82.45%;
+    max-width: 20%;
+}
+
+.extended .phrase5_es_img {
+    position: absolute;
+    bottom: 48%;
+    left: 86.65%;
+    transform: scale(2.5) scaleX(0.9) translateX(-50%) !important;
+    width: calc(10vh * 0.9);
+    height: calc(10vh * 0.9);
 }
 
 .extended .high5 {
@@ -1264,4 +1364,103 @@ body {
     bottom: 19.5%;
     left: 77.8%;
     color: rgb(225, 214, 124);
+}
+
+/* Classes for Alert bulletin slide */
+
+.alert {
+    z-index: 5;
+    display: inline-block;
+    text-align: left;
+    bottom: 0%;
+    right: 0%;
+    color:  #f2f2f2;
+}
+
+.alert .textdata {
+    font-family: 'Berthold Akzidenz Grotesk BE Medium Extended', sans-serif;
+    font-size: 4.6vh;       
+    transform: scaleY(0.99);
+    text-shadow: calc(0px + 0.4vh) calc(0px + 0.2vh) 0 rgba(0, 0, 0, 0.5);
+}
+
+.alert .alertLocation {
+    position: absolute;
+    transform: scaleX(0.96) !important;
+    transform-origin: left;
+    text-align: left;
+    font-size: 3.6vh;
+    bottom: 71%;
+    left: 21.5%;
+}
+
+.alert .alertSummmary {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: left;
+    top: 39.5%;
+    left: 18%;
+    transform: scaleY(0.99) scaleX(0.9);
+    transform-origin: left center;
+}
+
+.alert .alertSource {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: left;
+    top: 32.5%;
+    left: 18%;
+    transform: scaleY(0.99) scaleX(0.9);
+    transform-origin: left center;
+    color: rgb(225, 214, 124);
+}
+
+/* Update Alert slide classes for multiple alerts */
+.alert .alertSummary1 {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: left;
+    top: 39.5%;
+    left: 18%;
+    transform: scaleY(0.99) scaleX(0.9);
+    transform-origin: left center;
+}
+
+.alert .alertSource1 {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: left;
+    top: 32.5%;
+    left: 18%;
+    transform: scaleY(0.99) scaleX(0.9);
+    transform-origin: left center;
+    color: rgb(225, 214, 124);
+}
+
+/* Position for second alert - just the summary */
+.alert .alertSummary2 {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: left;
+    top: 50%;
+    left: 18%;
+    transform: scaleY(0.99) scaleX(0.9);
+    transform-origin: left center;
+}
+
+/* Position for third alert - just the summary */
+.alert .alertSummary3 {
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+    position: absolute;
+    text-align: left;
+    top: 60%;
+    left: 18%;
+    transform: scaleY(0.99) scaleX(0.9);
+    transform-origin: left center;
+}
+
+/* Remove unused classes */
+.alert .alertSource2,
+.alert .alertSource3 {
+    display: none;
 }

@@ -2,23 +2,69 @@ import { apiKey } from './config.js';
 
 var locations = [];
 var currentObs = {};
+var currentObs_es = {};
 var primaryLoc = {};
 var nearbyLocs = [];
 var thirtysixHour = {};
+var thirtysixHour_es = {};
 var sevenDay = {};
+var sevenDay_es = {};
 var bulletins = {};
 let almanac = {};
+let almanac_es = {};
+
+// Caching and debounce utilities
+const apiCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+async function cachedFetch(url, options = {}) {
+    const cacheKey = url, now = Date.now();
+    const cached = apiCache.get(cacheKey);
+    if (cached && (now - cached.timestamp < CACHE_TTL)) {
+        return cached.data;
+    }
+    let attempts = 0, maxAttempts = 3;
+    while (attempts < maxAttempts) {
+        try {
+            const res = await fetch(url, options);
+            if (res.ok) {
+                const data = await res.json();
+                apiCache.set(cacheKey, { timestamp: now, data });
+                return data;
+            }
+            attempts++;
+            await new Promise(r => setTimeout(r, 1000 * attempts));
+        } catch (e) {
+            attempts++;
+            if (attempts === maxAttempts) throw e;
+            await new Promise(r => setTimeout(r, 1000 * attempts));
+        }
+    }
+    if (cached) return cached.data;
+    throw new Error(`Failed to fetch ${url}`);
+}
+
+setInterval(() => {
+    const now = Date.now();
+    apiCache.forEach((val, key) => {
+        if (now - val.timestamp > CACHE_TTL) apiCache.delete(key);
+    });
+}, 10 * 60 * 1000);
 
 async function fetchRawUserLocation() {
     const customLoc = window.location.search.substring(1);
 
     if (customLoc) {
         try {
-            const response = await fetch(`https://api.weather.com/v3/location/search?query=${customLoc}&language=en-US&format=json&apiKey=45720848946ac3b87c8eeca0686a11ad`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
+            const data = await cachedFetch(`https://api.weather.com/v3/location/search?query=${customLoc}&language=en-US&format=json&apiKey=45720848946ac3b87c8eeca0686a11ad`);
             console.log('Custom Location specified by user:', data.location.displayName[0] + ',', data.location.adminDistrict[0] || data.location.country[0]);
             return {
                 lat: data.location.latitude[0],
@@ -30,11 +76,7 @@ async function fetchRawUserLocation() {
         }
     } else {
         try {
-            const response = await fetch('https://pro.ip-api.com/json/?key=AmUN9xAaQALVYu6');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
+            const data = await cachedFetch('https://pro.ip-api.com/json/?key=AmUN9xAaQALVYu6');
             return data;
         } catch (error) {
             console.error('Failed to fetch user location:', error);
@@ -47,11 +89,7 @@ async function fetchTWCUserLocation(locationData) {
     if (locationData) {
         const { lat, lon } = locationData;
         try {
-            const response = await fetch(`https://api.weather.com/v3/location/search?query=${lat},${lon}&language=en-US&format=json&apiKey=${apiKey}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
+            const data = await cachedFetch(`https://api.weather.com/v3/location/search?query=${lat},${lon}&language=en-US&format=json&apiKey=${apiKey}`);
             return data;
         } catch (error) {
             console.error('Failed to fetch TWC user location:', error);
@@ -62,7 +100,8 @@ async function fetchTWCUserLocation(locationData) {
                     latitude: [lat],
                     longitude: [lon],
                     displayName: ['Not Available'],
-                    adminDistrict: ['Not Available']
+                    adminDistrict: ['Not Available'],
+                    ianaTimeZone: ['America/New_York']
                 }
             };
         }
@@ -71,39 +110,30 @@ async function fetchTWCUserLocation(locationData) {
 
 async function fetchNearbyCities(lat, lon) {
     try {
-        const response = await fetch(`https://api.weather.com/v3/location/near?geocode=${lat},${lon}&product=observation&format=json&apiKey=${apiKey}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        return data;
+        return await cachedFetch(`https://api.weather.com/v3/location/near?geocode=${lat},${lon}&product=observation&format=json&apiKey=${apiKey}`);
     } catch (error) {
         console.error('Failed to fetch nearby cities:', error);
         return null;
     }
 }
 
-async function fetchCurrentObservations(apiUrl) {
+// Modify fetch functions to accept a language parameter (default "en-US")
+async function fetchCurrentObservations(apiUrl, lang) {
+    // Append language parameter if needed (assumes apiUrl has &language=, so replace its value)
+    apiUrl = apiUrl.replace(/language=[^&]+/, `language=${lang}`);
     try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        return data;
+        return await cachedFetch(apiUrl);
     } catch (error) {
         console.error('Failed to fetch current observations:', error);
         return null;
     }
 }
 
-async function fetchForecasts(apiUrl) {
+// Modify fetch functions to accept a language parameter (default "en-US")
+async function fetchForecasts(apiUrl, lang) {
+    apiUrl = apiUrl.replace(/language=[^&]+/, `language=${lang}`);
     try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return await response.json();
+        return await cachedFetch(apiUrl);
     } catch (error) {
         console.error('Failed to fetch forecast data:', error);
         return null;
@@ -159,8 +189,9 @@ async function fetchPrimaryAndNearbyLocations() {
         const locId = twcLocationData.location.locId[0];
         const locLat = twcLocationData.location.latitude[0];
         const locLon = twcLocationData.location.longitude[0];
+        const timezone = twcLocationData.location.ianaTimeZone[0];
 
-        primaryLoc = { locId, lat: locLat, lon: locLon, city: twcLocationData.location.displayName[0], state: twcLocationData.location.adminDistrict[0] };
+        primaryLoc = { locId, lat: locLat, lon: locLon, city: twcLocationData.location.displayName[0], state: twcLocationData.location.adminDistrict[0], timezone: timezone};
         locations.push(primaryLoc);
 
         const nearbyCitiesData = await fetchNearbyCities(locLat, locLon);
@@ -190,22 +221,73 @@ async function fetchPrimaryAndNearbyLocations() {
     }
 }
 
-async function populateCurrentObs() {
+// Modify populate functions to accept a language
+async function populateCurrentObs(lang) {
     await fetchPrimaryAndNearbyLocations();
 
     // Fetch all current observations in parallel
     const fetchPromises = locations.map(async location => {
-        const apiUrl = `https://api.weather.com/v3/wx/observations/current?geocode=${location.lat},${location.lon}&units=e&language=en-US&format=json&apiKey=${apiKey}`;
+        const apiUrl = `https://api.weather.com/v3/wx/observations/current?geocode=${location.lat},${location.lon}&units=e&language=${lang}&format=json&apiKey=${apiKey}`;
         try {
-            const data = await fetchCurrentObservations(apiUrl);
+            const data = await fetchCurrentObservations(apiUrl, lang);
             if (data) {
-                currentObs[location.locId] = {
-                    city: location.city,
-                    state: location.state,
-                    ...data
-                };
+                if (lang === "es-US") {
+                    currentObs_es[location.locId] = {
+                        city: location.city,
+                        state: location.state,
+                        ...data
+                    };
+                } else {
+                    currentObs[location.locId] = {
+                        city: location.city,
+                        state: location.state,
+                        ...data
+                    };
+                }
             } else {
                 // If data fetch fails, create a fallback object
+                if (lang === "es-US") {
+                    currentObs_es[location.locId] = {
+                        city: 'Not Available',
+                        state: 'Not Available',
+                        temperature: '--',
+                        windSpeed: '--',
+                        windDirectionCardinal: '--',
+                        relativeHumidity: '--',
+                        windGust: '--',
+                        wxPhraseMedium: 'Data Unavailable',
+                        iconCode: 44
+                    };
+                } else {
+                    currentObs[location.locId] = {
+                        city: 'Not Available',
+                        state: 'Not Available',
+                        temperature: '--',
+                        windSpeed: '--',
+                        windDirectionCardinal: '--',
+                        relativeHumidity: '--',
+                        windGust: '--',
+                        wxPhraseMedium: 'Data Unavailable',
+                        iconCode: 44
+                    };
+                }
+            }
+        } catch (error) {
+            console.error(`Failed to fetch observations for ${location.city}:`, error);
+            // Same fallback object on error
+            if (lang === "es-US") {
+                currentObs_es[location.locId] = {
+                    city: 'No Disponible',
+                    state: 'No Disponible',
+                    temperature: '--',
+                    windSpeed: '--',
+                    windDirectionCardinal: '--',
+                    relativeHumidity: '--',
+                    windGust: '--',
+                    wxPhraseMedium: 'Datos no Disponibles',
+                    iconCode: 44
+                };
+            } else {
                 currentObs[location.locId] = {
                     city: 'Not Available',
                     state: 'Not Available',
@@ -218,48 +300,54 @@ async function populateCurrentObs() {
                     iconCode: 44
                 };
             }
-        } catch (error) {
-            console.error(`Failed to fetch observations for ${location.city}:`, error);
-            // Same fallback object on error
-            currentObs[location.locId] = {
-                city: 'Not Available',
-                state: 'Not Available',
-                temperature: '--',
-                windSpeed: '--',
-                windDirectionCardinal: '--',
-                relativeHumidity: '--',
-                windGust: '--',
-                wxPhraseMedium: 'Data Unavailable',
-                iconCode: 44
-            };
         }
     });
 
     await Promise.all(fetchPromises);
 }
 
-async function populateForecasts() {
+// Modify populate functions to accept a language
+async function populateForecasts(lang = "en-US") {
     const forecastPromises = locations.map(async location => {
-        const apiUrl = `https://api.weather.com/v3/wx/forecast/daily/7day?geocode=${location.lat},${location.lon}&format=json&units=e&language=en-US&apiKey=${apiKey}`;
-        const data = await fetchForecasts(apiUrl);
+        const apiUrl = `https://api.weather.com/v3/wx/forecast/daily/7day?geocode=${location.lat},${location.lon}&format=json&units=e&language=${lang}&apiKey=${apiKey}`;
+        const data = await fetchForecasts(apiUrl, lang);
         
         if (data) {
             // Process 36-hour forecast (next 3 dayparts after current)
             const dayparts = data.daypart[0];
             const currentDaypartIndex = dayparts.daypartName.findIndex(name => name !== null);
             
-            thirtysixHour[location.locId] = {
-                city: location.city,
-                state: location.state,
-                periods: dayparts.daypartName
-                    .slice(currentDaypartIndex , currentDaypartIndex + 3)
-                    .map((name, idx) => ({
-                        name,
-                        narrative: dayparts.narrative[currentDaypartIndex + idx]
-                    }))
-                    .filter(period => period.name)
-            };
-            // console.log('36 hour forecast for location', location.city, ':', thirtysixHour[location.locId]);
+            if (lang === "es-US") {
+                thirtysixHour_es[location.locId] = {
+                    city: location.city,
+                    state: location.state,
+                    periods: dayparts.daypartName
+                        .slice(currentDaypartIndex , currentDaypartIndex + 3)
+                        .map((name, idx) => ({
+                            name,
+                            narrative: dayparts.narrative[currentDaypartIndex + idx]
+                        }))
+                        .filter(period => period.name)
+                };
+            } else {
+                thirtysixHour[location.locId] = {
+                    city: location.city,
+                    state: location.state,
+                    periods: dayparts.daypartName
+                        .slice(currentDaypartIndex , currentDaypartIndex + 3)
+                        .map((name, idx) => ({
+                            name,
+                            narrative: dayparts.narrative[currentDaypartIndex + idx]
+                        }))
+                        .filter(period => period.name)
+                };
+            }
+            // if (lang === "es-US") {
+            //     console.log('36 hour Spanish forecast for location', location.city, ':', thirtysixHour_es[location.locId]);
+            // }
+            // else {
+            //     console.log('36 hour forecast for location', location.city, ':', thirtysixHour[location.locId]);
+            // }
             // Process 7-day forecast with daypart filtering
             const isValidPeriod = (name) => {
                 if (!name) return false;
@@ -268,6 +356,13 @@ async function populateForecasts() {
                        !lowerName.includes('night') && 
                        !lowerName.includes('tonight') && 
                        !lowerName.includes('overnight');
+            };
+
+            const isValidPeriod_es = (name) => {
+                if (!name) return false;
+                const lowerName = name.toLowerCase();
+                return !lowerName.includes('hoy') && 
+                       !lowerName.includes('noche');
             };
 
             // Create mapping for shortened day names
@@ -281,63 +376,128 @@ async function populateForecasts() {
                 'Saturday': 'SAT'
             };
 
-            sevenDay[location.locId] = {
-                city: location.city,
-                state: location.state,
-                days: Array.from({ length: 7 }, (_, i) => {
-                    const dayStart = currentDaypartIndex + (i * 2);
-                    let periodIndex = dayStart;
-                    while (periodIndex < dayparts.daypartName.length && !isValidPeriod(dayparts.daypartName[periodIndex])) {
-                        periodIndex++;
-                    }
-                    
-                    return {
-                        high: data.temperatureMax[i + 1],
-                        low: data.temperatureMin[i + 1],
-                        name: shortDayNames[data.dayOfWeek[i + 1]], // Use the shortened day name
-                        icon: dayparts.iconCode[periodIndex],
-                        phrase: dayparts.wxPhraseShort[periodIndex].toUpperCase()
-                    };
-                })
+            const shortDayNames_es = {
+                'Domingo': 'DOM',
+                'Lunes': 'LUN',
+                'Martes': 'MAR',
+                'Miércoles': 'MIERC',
+                'Jueves': 'JUE',
+                'Viernes': 'VIE',
+                'Sábado': 'SAB'
             };
 
+            if (lang === "es-US") {
+                sevenDay_es[location.locId] = {
+                    city: location.city,
+                    state: location.state,
+                    days: Array.from({ length: 7 }, (_, i) => {
+                        const dayStart = currentDaypartIndex + (i * 2);
+                        let periodIndex = dayStart;
+                        while (periodIndex < dayparts.daypartName.length && !isValidPeriod_es(dayparts.daypartName[periodIndex])) {
+                            periodIndex++;
+                        }
+                        
+                        return {
+                            high: data.temperatureMax[i + 1],
+                            low: data.temperatureMin[i + 1],
+                            name: shortDayNames_es[data.dayOfWeek[i + 1]], // Use the shortened day name
+                            icon: dayparts.iconCode[periodIndex],
+                            phrase: dayparts.wxPhraseLong[periodIndex].toUpperCase()
+                        };
+                    })
+                };
+            } else {
+                sevenDay[location.locId] = {
+                    city: location.city,
+                    state: location.state,
+                    days: Array.from({ length: 7 }, (_, i) => {
+                        const dayStart = currentDaypartIndex + (i * 2);
+                        let periodIndex = dayStart;
+                        while (periodIndex < dayparts.daypartName.length && !isValidPeriod(dayparts.daypartName[periodIndex])) {
+                            periodIndex++;
+                        }
+                        
+                        return {
+                            high: data.temperatureMax[i + 1],
+                            low: data.temperatureMin[i + 1],
+                            name: shortDayNames[data.dayOfWeek[i + 1]], // Use the shortened day name
+                            icon: dayparts.iconCode[periodIndex],
+                            phrase: dayparts.wxPhraseShort[periodIndex].toUpperCase()
+                        };
+                    })
+                };
+            }
+
             // Create almanac record from forecast data
-            almanac[location.locId] = {
-                0: {
-                    dayOfWeek: data.dayOfWeek[0].substring(0, 3).toUpperCase(),
-                    sunrise: new Date(data.sunriseTimeLocal[0]).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true
-                    }).toLowerCase(),
-                    sunset: new Date(data.sunsetTimeLocal[0]).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true
-                    }).toLowerCase(),
-                },
-                1: {
-                    dayOfWeek: data.dayOfWeek[1].substring(0, 3).toUpperCase(),
-                    sunrise: new Date(data.sunriseTimeLocal[1]).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true
-                    }).toLowerCase(),
-                    sunset: new Date(data.sunsetTimeLocal[1]).toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true
-                    }).toLowerCase(),
-                    
-                },
-                moonPhases: [] // Will be populated by getMoonPhases
-            };
+            if (lang === "es-US") {
+                almanac_es[location.locId] = {
+                    0: {
+                        dayOfWeek: data.dayOfWeek[0].substring(0, 3).toUpperCase(),
+                        sunrise: new Date(data.sunriseTimeLocal[0]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                        sunset: new Date(data.sunsetTimeLocal[0]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                    },
+                    1: {
+                        dayOfWeek: data.dayOfWeek[1].substring(0, 3).toUpperCase(),
+                        sunrise: new Date(data.sunriseTimeLocal[1]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                        sunset: new Date(data.sunsetTimeLocal[1]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                        
+                    },
+                    moonPhases: [] // Will be populated by getMoonPhases
+                };
+            } else {
+                almanac[location.locId] = {
+                    0: {
+                        dayOfWeek: data.dayOfWeek[0].substring(0, 3).toUpperCase(),
+                        sunrise: new Date(data.sunriseTimeLocal[0]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                        sunset: new Date(data.sunsetTimeLocal[0]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                    },
+                    1: {
+                        dayOfWeek: data.dayOfWeek[1].substring(0, 3).toUpperCase(),
+                        sunrise: new Date(data.sunriseTimeLocal[1]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                        sunset: new Date(data.sunsetTimeLocal[1]).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }).toLowerCase(),
+                        
+                    },
+                    moonPhases: [] // Will be populated by getMoonPhases
+                };
+            }
 
             // Add this console.log to verify initial almanac creation
             // console.log('Created initial almanac record for location', location.locId, ':', almanac[location.locId]);
 
             // Wait for moon phases to be populated before continuing
-            await getMoonPhases(location.locId);
+            await getMoonPhases(location.locId, lang);
             
             // console.log('7-day forecast for location', location.city, ':', sevenDay[location.locId]);
         }
@@ -347,16 +507,20 @@ async function populateForecasts() {
     await Promise.all(forecastPromises);
 }
 
-async function getMoonPhases(locId) {
+// Update getMoonPhases to accept an optional lang parameter if necessary
+async function getMoonPhases(locId, lang) {
     try {
         const today = new Date();
         const currentMonth = today.getMonth() + 1;
         const currentYear = today.getFullYear();
         
+        const langCode = lang === "en-US" ? "en" : "es";
         const [currentMonthData, nextMonthData] = await Promise.all([
-            fetch(`https://www.icalendar37.net/lunar/api/?lang=en&month=${currentMonth}&year=${currentYear}`).then(res => res.json()),
-            fetch(`https://www.icalendar37.net/lunar/api/?lang=en&month=${currentMonth === 12 ? 1 : currentMonth + 1}&year=${currentMonth === 12 ? currentYear + 1 : currentYear}`).then(res => res.json())
+            fetch(`https://www.icalendar37.net/lunar/api/?lang=${langCode}&month=${currentMonth}&year=${currentYear}`).then(res => res.json()),
+            fetch(`https://www.icalendar37.net/lunar/api/?lang=${langCode}&month=${currentMonth === 12 ? 1 : currentMonth + 1}&year=${currentMonth === 12 ? currentYear + 1 : currentYear}`).then(res => res.json())
         ]);
+
+
 
         const nextPhases = [];
         const processPhases = (data, year, month) => {
@@ -378,7 +542,11 @@ async function getMoonPhases(locId) {
         // Sort phases by date and ensure we have data before assigning
         nextPhases.sort((a, b) => new Date(a.date) - new Date(b.date));
         if (nextPhases.length > 0) {
-            almanac[locId].moonPhases = nextPhases;
+            if (lang === "es-US") {
+                almanac_es[locId].moonPhases = nextPhases;
+            } else {
+                almanac[locId].moonPhases = nextPhases;
+            }
             return nextPhases;
         }
     } catch (error) {
@@ -393,10 +561,11 @@ async function populateBulletins() {
         const headlinesData = await fetchBulletins(location.lat, location.lon);
         
         if (headlinesData && headlinesData.alerts && headlinesData.alerts.length > 0) {
-            // Sort all alerts by significance
+            // Sort all alerts by significance, overriding "Special Marine Warning" to "Y"
             const sortedAlerts = [...headlinesData.alerts].map(alert => ({
                 ...alert,
-                significance: alert.significance === 'S' ? 'Y' : alert.significance
+                significance: alert.eventDescription === 'Special Marine Warning' ? 'Y' :
+                              (alert.significance === 'S' ? 'Y' : alert.significance)
             })).sort((a, b) => 
                 getSeverityOrder(b.significance) - getSeverityOrder(a.significance)
             );
@@ -416,7 +585,10 @@ async function populateBulletins() {
                         eventDescription: detailData.alertDetail.eventDescription,
                         headlineText: detailData.alertDetail.headlineText,
                         description: detailData.alertDetail.texts[0].description.replace(/(\r\n|\n|\r|\*)/gm, " "),
-                        brief: "The " + detailData.alertDetail.source + " has issued a " + detailData.alertDetail.headlineText.replace(/until/gi, "for your viewing area until") + ". Stay tuned to The Weather Channel for further details."
+                        brief: "The " + detailData.alertDetail.source + " has issued a " + detailData.alertDetail.headlineText.replace(/until/gi, "for your viewing area until") + ". Stay tuned to The Weather Channel for further details.",
+                        summary: detailData.alertDetail.headlineText.replace(/until/gi, "in effect until") + ".",
+                        source: detailData.alertDetail.source,
+                        expirationUTC: detailData.alertDetail.expireTimeUTC,
                     });
                 }
             }
@@ -450,19 +622,24 @@ function cleanupOldData() {
     }
 }
 
-// Modify refreshData function
-async function refreshData() {
-    // Clean up old data before fetching new data
+// In refreshData, call the default (en-US) functions and then Spanish ones
+const refreshData = debounce(async function() {
     cleanupOldData();
-    
-    await populateCurrentObs();
-    await populateForecasts();
-    await populateBulletins();
-}
+    await Promise.all([
+        populateCurrentObs("en-US"),
+        populateCurrentObs("es-US"),
+        populateForecasts("en-US"),
+        populateForecasts("es-US"),
+        populateBulletins()
+    ]);
+}, 1000);
 
 const dataPopulationPromise = new Promise(async (resolve, reject) => {
     try {
-        await populateCurrentObs();
+        await Promise.all([
+            populateCurrentObs("en-US"),
+            populateCurrentObs("es-US"),
+        ]);
         
         // Set default data if primary location wasn't populated
         if (!primaryLoc.locId || !currentObs[primaryLoc.locId]) {
@@ -528,8 +705,10 @@ const dataPopulationPromise = new Promise(async (resolve, reject) => {
                 })
             };
         }
-
-        await populateForecasts();
+        await Promise.all([
+        populateForecasts("en-US"),
+        populateForecasts("es-US"),
+        ]);
         await populateBulletins();
         resolve();
     } catch (error) {
@@ -601,121 +780,121 @@ const dataPopulationPromise = new Promise(async (resolve, reject) => {
     }
 });
 
+// In updateFieldsWithNewData, check for a trailing "_es" in dataType.
 async function updateFieldsWithNewData() {
+    // Iterate all .textdata elements in slides
     const allFields = document.querySelectorAll('.slide .textdata');
     allFields.forEach(field => {
-        const fieldId = field.id;
+        // Normalize the field id by removing any package prefix
+        let normalizedFieldId = field.id;
+        if (normalizedFieldId.includes('_')) {
+            normalizedFieldId = normalizedFieldId.split('_').slice(1).join('_');
+        }
+        // Use normalized id in place of the full id
         const dataTypeAttr = field.getAttribute('dataType');
         if (!dataTypeAttr) {
-            // console.log(`Ignoring field: ${fieldId} as it does not have a dataType attribute`);
             return;
         }
-        const [dataType, part] = dataTypeAttr.split('_'); // Read the dataType attribute
-
-        // Ignore fields without a dataType value
-        if (!dataType) {
-            console.log(`Ignoring field: ${fieldId} as it does not have a dataType attribute`);
-            return;
+        // Check if this field is for Spanish data
+        let useSpanish = false;
+        let baseDataType = dataTypeAttr;
+        if (dataTypeAttr.endsWith("_es")) {
+            useSpanish = true;
+            baseDataType = dataTypeAttr.substring(0, dataTypeAttr.length - 3);
         }
+        const [dataTypeBase, part] = baseDataType.split('_');
 
-        // Determine the location based on field ID
         let location = null;
-
-        if (fieldId.startsWith('now')) {
+        if (normalizedFieldId.startsWith('now')) {
             location = primaryLoc;
-        } else if (fieldId.startsWith('near')) {
-            // Extract the number from the field ID, e.g., 'nearCity1' -> index 0
-            const match = fieldId.match(/near\w+(\d+)/);
+        } else if (normalizedFieldId.startsWith('near')) {
+            const match = normalizedFieldId.match(/near\w+(\d+)/);
             if (match && match[1]) {
-                const index = parseInt(match[1], 10) - 1; // 'nearCity1' corresponds to nearbyLocs[0]
+                const index = parseInt(match[1], 10) - 1;
                 if (nearbyLocs[index]) {
                     location = nearbyLocs[index];
                 }
             }
-        } else if (fieldId.startsWith('36hr')) {
-            // 36Hr only uses the primary location
+        } else if (normalizedFieldId.startsWith('36hr')) {
             location = primaryLoc;
-        } else if (fieldId.startsWith('ext')) {
-            // Extended only uses the primary location
+        } else if (normalizedFieldId.startsWith('ext')) {
             location = primaryLoc;
-        } else if (fieldId.startsWith('alm')) {
-            // Almanac only uses the primary location
+        } else if (normalizedFieldId.startsWith('alm')) {
             location = primaryLoc;
         }
 
         if (!location) {
-            // console.log(`No location found for field: ${fieldId}`);
             return;
         }
-
         const locationId = location.locId;
 
-        if (currentObs[locationId] && (fieldId.startsWith('now') || fieldId.startsWith('near'))) {
-            let value = currentObs[locationId][dataType];
-            if (dataType === 'windSpeedDir') {
-                value = currentObs[locationId].windDirectionCardinal + ' ' + currentObs[locationId].windSpeed;
+        // Choose data objects based on language
+        const obs = useSpanish ? currentObs_es : currentObs;
+        const hr36 = useSpanish ? thirtysixHour_es : thirtysixHour;
+        const ext = useSpanish ? sevenDay_es : sevenDay;
+        const alm = useSpanish ? almanac_es : almanac;
+
+        if (obs[locationId] && (normalizedFieldId.startsWith('now') || normalizedFieldId.startsWith('near'))) {
+            let value = obs[locationId][dataTypeBase];
+            if (dataTypeBase === 'windSpeedDir') {
+                value = obs[locationId].windDirectionCardinal + ' ' + obs[locationId].windSpeed;
             }
-            if (dataType === 'relativeHumidity') {
+            if (dataTypeBase === 'relativeHumidity') {
                 value += '%';
-            } else if (dataType === 'windGust') {
+            } else if (dataTypeBase === 'windGust') {
                 value = value ? value + ' mph' : 'None';
             }
             field.textContent = value;
-            // console.log(`Updated field: ${fieldId} with value: ${value}`);
-            if (dataType === 'wxPhraseMedium' || 'city') {
-                const imgElement = document.querySelector(`#${fieldId}_img`);
+            if (dataTypeBase === 'wxPhraseMedium' || dataTypeBase === 'city') {
+                const imgElement = document.querySelector(`#${field.id}_img`);
                 if (imgElement) {
-                    imgElement.src = `./images/wxicons/${currentObs[locationId].iconCode}.png`;
-                    // console.log(`Updated image src for field: ${fieldId} with src: ./images/wxicons/${currentObs[locationId].iconCode}.png`);
+                    imgElement.src = `./images/wxicons/${obs[locationId].iconCode}.png`;
                 }
             }
-        } else if (thirtysixHour[locationId] && (fieldId.startsWith('36hr'))){
-            let value = thirtysixHour[locationId][dataType];
-            if (dataType === 'name') {
-                value = thirtysixHour[locationId].periods[part].name;
-            } else if (dataType === 'narrative') {
-                value = thirtysixHour[locationId].periods[part].narrative;
+        } else if (hr36[locationId] && (normalizedFieldId.startsWith('36hr'))) {
+            let value = "";
+            if (dataTypeBase === 'name') {
+                value = hr36[locationId].periods[part].name;
+            } else if (dataTypeBase === 'narrative') {
+                value = hr36[locationId].periods[part].narrative;
             }
             field.textContent = value;
-        } else if (sevenDay[locationId] && (fieldId.startsWith('ext'))){
-            // Extract the type and day from the dataType attribute
-            let value = sevenDay[locationId][dataType];
-            if (dataType === 'name') {
-                value = sevenDay[locationId].days[part].name;
-            } else if (dataType === 'high') {
-                value = sevenDay[locationId].days[part].high;
-            } else if (dataType === 'low') {
-                value = sevenDay[locationId].days[part].low;
-            } else if (dataType === 'icon') {
-                const imgElement = document.querySelector(`#${fieldId}_img`);
+        } else if (ext[locationId] && (normalizedFieldId.startsWith('ext'))) {
+            let value = "";
+            if (dataTypeBase === 'name') {
+                value = ext[locationId].days[part].name;
+            } else if (dataTypeBase === 'high') {
+                value = ext[locationId].days[part].high;
+            } else if (dataTypeBase === 'low') {
+                value = ext[locationId].days[part].low;
+            } else if (dataTypeBase === 'icon') {
+                const imgElement = document.querySelector(`#${field.id}_img`);
                 if (imgElement) {
-                    imgElement.src = `./images/wxicons/${currentObs[locationId].iconCode}.png`;
-                    // console.log(`Updated image src for field: ${fieldId} with src: ./images/wxicons/${sevenDay[locationId].days[part].icon}.png`);
+                    imgElement.src = `./images/wxicons/${obs[locationId].iconCode}.png`;
                 }
-            } else if (dataType === 'phrase') {
-                value = sevenDay[locationId].days[part].phrase;
+            } else if (dataTypeBase === 'phrase') {
+                value = ext[locationId].days[part].phrase;
             }
             field.textContent = value;
-        } else if (almanac[locationId] && (fieldId.startsWith('alm'))){
-            let value = almanac[locationId][dataType];
-            if (dataType === 'dayOfWeek') {
-                value = almanac[locationId][part].dayOfWeek;
-            } else if (dataType === 'sunrise') {
-                value = almanac[locationId][part].sunrise;
-            } else if (dataType === 'sunset') {
-                value = almanac[locationId][part].sunset;
-            } else if (dataType === "phaseName") {
-                value = almanac[locationId].moonPhases[part].phaseName;
-            } else if (dataType === "date") {
-                value = almanac[locationId].moonPhases[part].date;
+        } else if (alm[locationId] && (normalizedFieldId.startsWith('alm'))) {
+            let value = "";
+            if (dataTypeBase === 'dayOfWeek') {
+                value = alm[locationId][part].dayOfWeek;
+            } else if (dataTypeBase === 'sunrise') {
+                value = alm[locationId][part].sunrise;
+            } else if (dataTypeBase === 'sunset') {
+                value = alm[locationId][part].sunset;
+            } else if (dataTypeBase === "phaseName") {
+                value = alm[locationId].moonPhases[part].phaseName;
+            } else if (dataTypeBase === "date") {
+                value = alm[locationId].moonPhases[part].date;
             }
             field.textContent = value;
         } else {
-            console.log(`No data found for dataType: ${dataType} in location: ${locationId}`);
+            console.log(`No data found for dataType: ${dataTypeBase} in location: ${locationId}`);
         }
     });
 }
-
 
 export { 
     currentObs, 
@@ -727,5 +906,9 @@ export {
     thirtysixHour,
     sevenDay,
     bulletins,
-    almanac
+    almanac,
+    currentObs_es,
+    thirtysixHour_es,
+    sevenDay_es,
+    almanac_es
 };
