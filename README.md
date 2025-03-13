@@ -61,4 +61,4 @@ Team Dew Point
 
 "Up Next" Slide                     |  "Weather Bulletin" Slide              | "Condiciones Actuales" (Current Condition) Slide
 :-------------------------:|:-------------------------:|:-------------------------:
-!["Up Next"](https://i.imgur.com/UiyTobV.png)  |  ![Weather Bulletin](https://i.imgur.com/7QFNbao.png) | !["36 Hour Forecast" Slide](https://i.imgur.com/e7De1bj.png)
+!["Up Next"](https://i.imgur.com/UiyTobV.png)  |  ![Weather Bulletin](https://i.imgur.com/wPyfeLx.png) | !["36 Hour Forecast" Slide](https://i.imgur.com/e7De1bj.png)
