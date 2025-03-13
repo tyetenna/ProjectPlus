@@ -231,31 +231,51 @@ async function populateCurrentObs(lang) {
         try {
             const data = await fetchCurrentObservations(apiUrl, lang);
             if (data) {
+                // Process wind data for "Calm" condition (less than 4 mph)
+                const windSpeed = parseInt(data.windSpeed) || 0;
+                
+                // Create a processed data object with the "Calm" logic applied
+                const processedData = {
+                    ...data,
+                    // Store original values but add display versions for wind
+                    windSpeedOriginal: data.windSpeed,
+                    windDirectionCardinalOriginal: data.windDirectionCardinal,
+                }
+                
+                // Apply "Calm" logic if wind speed < 4mph
+                if (windSpeed < 4) {
+                    processedData.windDirectionCardinal = ''; // Clear direction for calm winds
+                    processedData.windSpeedDisplay = lang === "es-US" ? "Calma" : "Calm";
+                } else {
+                    processedData.windSpeedDisplay = `${data.windDirectionCardinal} ${data.windSpeed}`;
+                }
+                
                 if (lang === "es-US") {
                     currentObs_es[location.locId] = {
                         city: location.city,
                         state: location.state,
-                        ...data
+                        ...processedData
                     };
                 } else {
                     currentObs[location.locId] = {
                         city: location.city,
                         state: location.state,
-                        ...data
+                        ...processedData
                     };
                 }
             } else {
-                // If data fetch fails, create a fallback object
+                // If data fetch fails, create a fallback object with calm wind defaults
                 if (lang === "es-US") {
                     currentObs_es[location.locId] = {
-                        city: 'Not Available',
-                        state: 'Not Available',
+                        city: 'No Disponible',
+                        state: 'No Disponible',
                         temperature: '--',
                         windSpeed: '--',
-                        windDirectionCardinal: '--',
+                        windDirectionCardinal: '',
+                        windSpeedDisplay: 'Calma',
                         relativeHumidity: '--',
                         windGust: '--',
-                        wxPhraseMedium: 'Data Unavailable',
+                        wxPhraseMedium: 'Datos no Disponibles',
                         iconCode: 44
                     };
                 } else {
@@ -264,7 +284,8 @@ async function populateCurrentObs(lang) {
                         state: 'Not Available',
                         temperature: '--',
                         windSpeed: '--',
-                        windDirectionCardinal: '--',
+                        windDirectionCardinal: '',
+                        windSpeedDisplay: 'Calm',
                         relativeHumidity: '--',
                         windGust: '--',
                         wxPhraseMedium: 'Data Unavailable',
@@ -274,14 +295,15 @@ async function populateCurrentObs(lang) {
             }
         } catch (error) {
             console.error(`Failed to fetch observations for ${location.city}:`, error);
-            // Same fallback object on error
+            // Same fallback object on error with calm wind defaults
             if (lang === "es-US") {
                 currentObs_es[location.locId] = {
                     city: 'No Disponible',
                     state: 'No Disponible',
                     temperature: '--',
                     windSpeed: '--',
-                    windDirectionCardinal: '--',
+                    windDirectionCardinal: '',
+                    windSpeedDisplay: 'Calma',
                     relativeHumidity: '--',
                     windGust: '--',
                     wxPhraseMedium: 'Datos no Disponibles',
@@ -293,7 +315,8 @@ async function populateCurrentObs(lang) {
                     state: 'Not Available',
                     temperature: '--',
                     windSpeed: '--',
-                    windDirectionCardinal: '--',
+                    windDirectionCardinal: '',
+                    windSpeedDisplay: 'Calm',
                     relativeHumidity: '--',
                     windGust: '--',
                     wxPhraseMedium: 'Data Unavailable',
@@ -837,8 +860,14 @@ async function updateFieldsWithNewData() {
         if (obs[locationId] && (normalizedFieldId.startsWith('now') || normalizedFieldId.startsWith('near'))) {
             let value = obs[locationId][dataTypeBase];
             if (dataTypeBase === 'windSpeedDir') {
-                value = obs[locationId].windDirectionCardinal + ' ' + obs[locationId].windSpeed;
+                // Use the pre-computed windSpeedDisplay property
+                value = obs[locationId].windSpeedDisplay || 
+                       (useSpanish ? "Calma" : "Calm"); // Fallback
+            } else if (dataTypeBase === 'windDirectionCardinal') {
+                // Use the already processed windDirectionCardinal (empty for calm winds)
+                value = obs[locationId].windDirectionCardinal;
             }
+            
             if (dataTypeBase === 'relativeHumidity') {
                 value += '%';
             } else if (dataTypeBase === 'windGust') {

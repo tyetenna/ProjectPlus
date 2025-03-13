@@ -505,6 +505,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             { text: "From the " + alerts[0].source, id: 'alertSource1', className: 'alertSource1' }
         ];
 
+        // Create container for alert summaries
+        const summariesContainer = document.createElement('div');
+        summariesContainer.className = 'alert-summaries';
+        summariesContainer.id = 'alert-summaries';
+
         // Add all alert summaries (up to 3)
         for (let i = 0; i < Math.min(alerts.length, 3); i++) {
             fields.push(
@@ -546,33 +551,57 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (alertLocation) alertLocation.textContent = primaryLoc.city + " Area";
             if (alertSource1) alertSource1.textContent = "From the " + alerts[0].source;
-            
-            // First, hide all existing alert elements that might exist from previous updates
-            for (let i = 1; i <= 3; i++) {
-                const existingSummary = existingAlert.querySelector(`#alertSummary${i}`);
-                if (existingSummary) existingSummary.style.display = 'none';
+
+            // Get or create the alert summaries container
+            let summariesContainer = existingAlert.querySelector('.alert-summaries');
+            if (!summariesContainer) {
+                summariesContainer = document.createElement('div');
+                summariesContainer.className = 'alert-summaries';
+                existingAlert.querySelector('.alert').appendChild(summariesContainer);
+            } else {
+                // Clear existing summaries
+                summariesContainer.innerHTML = '';
             }
             
-            // Update each alert summary
+            // Add each alert summary to the container
             for (let i = 0; i < Math.min(alerts.length, 3); i++) {
-                const alertSummary = existingAlert.querySelector(`#alertSummary${i+1}`);
-                if (alertSummary) {
-                    alertSummary.textContent = alerts[i].summary;
-                    alertSummary.style.display = 'block';
-                }
+                const alertSummary = document.createElement('div');
+                alertSummary.id = `alertSummary${i+1}`;
+                alertSummary.className = `alertSummary${i+1} textdata`;
+                alertSummary.textContent = alerts[i].summary;
+                summariesContainer.appendChild(alertSummary);
             }
         } else {
             // Create the Alert slide element with all alerts
             createSlideElements([alertSlide], ldlElement);
             
-            // Ensure correct position in DOM
-            const slidesContainer = document.getElementById('slides-container');
+            // Get the newly created slide and add the summaries container
             const alertElement = document.getElementById('Alert');
-            const affiliateElement = document.getElementById('Affiliate');
-            
-            if (alertElement && affiliateElement && affiliateElement.nextSibling) {
-                slidesContainer.removeChild(alertElement);
-                slidesContainer.insertBefore(alertElement, affiliateElement.nextSibling);
+            if (alertElement) {
+                // Create and add the summaries container
+                const container = document.createElement('div');
+                container.className = 'alert-summaries';
+                
+                // Add each alert summary to the container
+                for (let i = 0; i < Math.min(alerts.length, 3); i++) {
+                    const alertSummary = alertElement.querySelector(`#alertSummary${i+1}`);
+                    if (alertSummary) {
+                        // Move the summary into the container
+                        container.appendChild(alertSummary);
+                    }
+                }
+                
+                // Add the container to the alert element
+                alertElement.querySelector('.alert').appendChild(container);
+                
+                // Ensure correct position in DOM
+                const slidesContainer = document.getElementById('slides-container');
+                const affiliateElement = document.getElementById('Affiliate');
+                
+                if (alertElement && affiliateElement && affiliateElement.nextSibling) {
+                    slidesContainer.removeChild(alertElement);
+                    slidesContainer.insertBefore(alertElement, affiliateElement.nextSibling);
+                }
             }
         }
     }

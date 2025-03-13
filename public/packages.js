@@ -114,7 +114,7 @@ const Core = async (locale) => {
             { text: currentObs[primaryLoc.locId].city, id: `${thisPackage}_nowCity`, className: 'city', dataType:"city", imgSrc: null },
             { text: currentObs[primaryLoc.locId].relativeHumidity + "%", id: `${thisPackage}_nowHumidity`, className: 'humidity', dataType:"relativeHumidity", imgSrc: null },
             { text: currentObs[primaryLoc.locId].pressureAltimeter, id: `${thisPackage}_nowPressure`, className: 'pressure', dataType:"pressureAltimeter", imgSrc: null },
-            { text: currentObs[primaryLoc.locId].windDirectionCardinal + " " + currentObs[primaryLoc.locId].windSpeed, id: `${thisPackage}_nowWind`, className: 'wind', dataType:"windSpeedDir", imgSrc: null },
+            { text: currentObs[primaryLoc.locId].windSpeedDisplay, id: `${thisPackage}_nowWind`, className: 'wind', dataType:"windSpeedDir", imgSrc: null },
             { text: currentObs[primaryLoc.locId].windGust ? currentObs[primaryLoc.locId].windGust + " mph" : "None", id: `${thisPackage}_nowGusts`, className: 'gusts', dataType:"windGust", imgSrc: null },
             { text: currentObs[primaryLoc.locId].temperature, id: `${thisPackage}_nowTemperature`, className: 'temperature', dataType:"temperature", imgSrc: null },
             { text: currentObs[primaryLoc.locId].wxPhraseMedium, id: `${thisPackage}_nowCondition`, className: 'condition', dataType:"wxPhraseMedium", imgSrc: `./images/wxicons/${currentObs[primaryLoc.locId].iconCode}.png` }
@@ -125,23 +125,23 @@ const Core = async (locale) => {
             // Nearby City 1
             { text: currentObs[nearbyLocs[0].locId].city, id: `${thisPackage}_nearCity1`, className: 'city_1', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[0].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[0].locId].temperature, id: `${thisPackage}_nearTemp1`, className: 'temperature_1', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[0].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir1`, className: 'windDir_1', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[0].locId].windSpeed, id: `${thisPackage}_nearWindSpeed1`, className: 'windSpeed_1', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[0].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir1`, className: 'windDir_1', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[0].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed1`, className: 'windSpeed_1', dataType:"windSpeedDir", imgSrc: null },
             // Nearby City 2
             { text: currentObs[nearbyLocs[1].locId].city, id: `${thisPackage}_nearCity2`, className: 'city_2', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[1].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[1].locId].temperature, id: `${thisPackage}_nearTemp2`, className: 'temperature_2', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[1].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir2`, className: 'windDir_2', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[1].locId].windSpeed, id: `${thisPackage}_nearWindSpeed2`, className: 'windSpeed_2', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[1].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir2`, className: 'windDir_2', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[1].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed2`, className: 'windSpeed_2', dataType:"windSpeedDir", imgSrc: null },
             // Nearby City 3
             { text: currentObs[nearbyLocs[2].locId].city, id: `${thisPackage}_nearCity3`, className: 'city_3', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[2].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[2].locId].temperature, id: `${thisPackage}_nearTemp3`, className: 'temperature_3', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[2].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir3`, className: 'windDir_3', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[2].locId].windSpeed, id: `${thisPackage}_nearWindSpeed3`, className: 'windSpeed_3', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[2].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir3`, className: 'windDir_3', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[2].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed3`, className: 'windSpeed_3', dataType:"windSpeedDir", imgSrc: null },
             // Nearby City 4
             { text: currentObs[nearbyLocs[3].locId].city, id: `${thisPackage}_nearCity4`, className: 'city_4', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[3].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[3].locId].temperature, id: `${thisPackage}_nearTemp4`, className: 'temperature_4', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[3].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir4`, className: 'windDir_4', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[3].locId].windSpeed, id: `${thisPackage}_nearWindSpeed4`, className: 'windSpeed_4', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[3].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir4`, className: 'windDir_4', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[3].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed4`, className: 'windSpeed_4', dataType:"windSpeedDir", imgSrc: null },
         ] },
         { id: `${thisPackage}_Nearby2`, src: './images/background/' + locale + '/nearby.png', text: 'Current Conditions', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: false, fields:[
             { text: "TEMP", id: `${thisPackage}_nearTempLabel`, className: 'tempLabel', imgSrc: null },
@@ -149,23 +149,23 @@ const Core = async (locale) => {
             // Nearby City 5
             { text: currentObs[nearbyLocs[4].locId].city, id: `${thisPackage}_nearCity5`, className: 'city_1', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[4].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[4].locId].temperature, id: `${thisPackage}_nearTemp5`, className: 'temperature_1', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[4].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir5`, className: 'windDir_1', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[4].locId].windSpeed, id: `${thisPackage}_nearWindSpeed5`, className: 'windSpeed_1', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[4].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir5`, className: 'windDir_1', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[4].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed5`, className: 'windSpeed_1', dataType:"windSpeedDir", imgSrc: null },
             // Nearby City 6
             { text: currentObs[nearbyLocs[5].locId].city, id: `${thisPackage}_nearCity6`, className: 'city_2', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[5].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[5].locId].temperature, id: `${thisPackage}_nearTemp6`, className: 'temperature_2', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[5].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir6`, className: 'windDir_2', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[5].locId].windSpeed, id: `${thisPackage}_nearWindSpeed6`, className: 'windSpeed_2', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[5].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir6`, className: 'windDir_2', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[5].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed6`, className: 'windSpeed_2', dataType:"windSpeedDir", imgSrc: null },
             // Nearby City 7
             { text: currentObs[nearbyLocs[6].locId].city, id: `${thisPackage}_nearCity7`, className: 'city_3', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[6].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[6].locId].temperature, id: `${thisPackage}_nearTemp7`, className: 'temperature_3', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[6].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir7`, className: 'windDir_3', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[6].locId].windSpeed, id: `${thisPackage}_nearWindSpeed7`, className: 'windSpeed_3', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[6].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir7`, className: 'windDir_3', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[6].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed7`, className: 'windSpeed_3', dataType:"windSpeedDir", imgSrc: null },
             // Nearby City 8
             { text: currentObs[nearbyLocs[7].locId].city, id: `${thisPackage}_nearCity8`, className: 'city_4', dataType:"city", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[7].locId].iconCode}.png` },
             { text: currentObs[nearbyLocs[7].locId].temperature, id: `${thisPackage}_nearTemp8`, className: 'temperature_4', dataType:"temperature", imgSrc: null },
-            { text: currentObs[nearbyLocs[7].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir8`, className: 'windDir_4', dataType:"windDirectionCardinal", imgSrc: null },
-            { text: currentObs[nearbyLocs[7].locId].windSpeed, id: `${thisPackage}_nearWindSpeed8`, className: 'windSpeed_4', dataType:"windSpeed", imgSrc: null },
+            // { text: currentObs[nearbyLocs[7].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir8`, className: 'windDir_4', dataType:"windDirectionCardinal", imgSrc: null },
+            { text: currentObs[nearbyLocs[7].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed8`, className: 'windSpeed_4', dataType:"windSpeedDir", imgSrc: null },
         ] },
         { id: `${thisPackage}_Radar2`, src: './images/background/' + locale + '/nearby.png', text: 'Local Doppler', noFade: true, duration: 20, slide: './images/Slide_Radar.png', overlay: './images/Plus_Product.png', vocallocal: false, fields: [
             // Add a container for the radar map
@@ -333,7 +333,7 @@ const MiniCore = async (locale) => {
             { text: currentObs[primaryLoc.locId].city, id: `${thisPackage}_nowCity`, className: 'city', dataType: "city", imgSrc: null },
             { text: currentObs[primaryLoc.locId].relativeHumidity + "%", id: `${thisPackage}_nowHumidity`, className: 'humidity', dataType: "relativeHumidity", imgSrc: null },
             { text: currentObs[primaryLoc.locId].pressureAltimeter, id: `${thisPackage}_nowPressure`, className: 'pressure', dataType: "pressureAltimeter", imgSrc: null },
-            { text: currentObs[primaryLoc.locId].windDirectionCardinal + " " + currentObs[primaryLoc.locId].windSpeed, id: `${thisPackage}_nowWind`, className: 'wind', dataType: "windSpeedDir", imgSrc: null },
+            { text: currentObs[primaryLoc.locId].windSpeedDisplay, id: `${thisPackage}_nowWind`, className: 'wind', dataType: "windSpeedDir", imgSrc: null },
             { text: currentObs[primaryLoc.locId].windGust ? currentObs[primaryLoc.locId].windGust + " mph" : "None", id: `${thisPackage}_nowGusts`, className: 'gusts', dataType: "windGust", imgSrc: null },
             { text: currentObs[primaryLoc.locId].temperature, id: `${thisPackage}_nowTemperature`, className: 'temperature', dataType: "temperature", imgSrc: null },
             { text: currentObs[primaryLoc.locId].wxPhraseMedium, id: `${thisPackage}_nowCondition`, className: 'condition', dataType: "wxPhraseMedium", imgSrc: `./images/wxicons/${currentObs[primaryLoc.locId].iconCode}.png` }
@@ -465,7 +465,7 @@ const ExtraLocal = async (locale) => {
             { text: currentObs[primaryLoc.locId].city, id: `${thisPackage}_nowCity`, className: 'city', dataType: "city", imgSrc: null },
             { text: currentObs[primaryLoc.locId].relativeHumidity + "%", id: `${thisPackage}_nowHumidity`, className: 'humidity', dataType: "relativeHumidity", imgSrc: null },
             { text: currentObs[primaryLoc.locId].pressureAltimeter, id: `${thisPackage}_nowPressure`, className: 'pressure', dataType: "pressureAltimeter", imgSrc: null },
-            { text: currentObs[primaryLoc.locId].windDirectionCardinal + " " + currentObs[primaryLoc.locId].windSpeed, id: `${thisPackage}_nowWind`, className: 'wind', dataType: "windSpeedDir", imgSrc: null },
+            { text: currentObs[primaryLoc.locId].windSpeedDisplay, id: `${thisPackage}_nowWind`, className: 'wind', dataType: "windSpeedDir", imgSrc: null },
             { text: currentObs[primaryLoc.locId].windGust ? currentObs[primaryLoc.locId].windGust + " mph" : "None", id: `${thisPackage}_nowGusts`, className: 'gusts', dataType: "windGust", imgSrc: null },
             { text: currentObs[primaryLoc.locId].temperature, id: `${thisPackage}_nowTemperature`, className: 'temperature', dataType: "temperature", imgSrc: null },
             { text: currentObs[primaryLoc.locId].wxPhraseMedium, id: `${thisPackage}_nowCondition`, className: 'condition', dataType: "wxPhraseMedium", imgSrc: `./images/wxicons/${currentObs[primaryLoc.locId].iconCode}.png` }
@@ -600,7 +600,7 @@ const Spanish = async (locale) => {
             { text: currentObs_es[primaryLoc.locId].city, id: `${thisPackage}_nowCity`, className: 'city', dataType:"city_es", imgSrc: null },
             { text: currentObs_es[primaryLoc.locId].relativeHumidity + "%", id: `${thisPackage}_nowHumidity`, className: 'humidity', dataType:"relativeHumidity_es", imgSrc: null },
             { text: currentObs_es[primaryLoc.locId].pressureAltimeter, id: `${thisPackage}_nowPressure`, className: 'pressure', dataType:"pressureAltimeter_es", imgSrc: null },
-            { text: currentObs_es[primaryLoc.locId].windDirectionCardinal + " " + currentObs[primaryLoc.locId].windSpeed, id: `${thisPackage}_nowWind`, className: 'wind', dataType:"windSpeedDir_es", imgSrc: null },
+            { text: currentObs_es[primaryLoc.locId].windSpeedDisplay, id: `${thisPackage}_nowWind`, className: 'wind', dataType:"windSpeedDir_es", imgSrc: null },
             { text: currentObs_es[primaryLoc.locId].windGust ? currentObs[primaryLoc.locId].windGust + " mph" : "None", id: `${thisPackage}_nowGusts`, className: 'gusts', dataType:"windGust_es", imgSrc: null },
             { text: currentObs_es[primaryLoc.locId].temperature, id: `${thisPackage}_nowTemperature`, className: 'temperature', dataType:"temperature_es", imgSrc: null },
             { text: currentObs_es[primaryLoc.locId].wxPhraseLong, id: `${thisPackage}_nowCondition`, className: 'condition', dataType:"wxPhraseLong_es", imgSrc: `./images/wxicons/${currentObs[primaryLoc.locId].iconCode}.png` }
@@ -611,23 +611,23 @@ const Spanish = async (locale) => {
             // Nearby City 1
             { text: currentObs_es[nearbyLocs[0].locId].city, id: `${thisPackage}_nearCity1`, className: 'city_1', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[0].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[0].locId].temperature, id: `${thisPackage}_nearTemp1`, className: 'temperature_1', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[0].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir1`, className: 'windDir_1', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[0].locId].windSpeed, id: `${thisPackage}_nearWindSpeed1`, className: 'windSpeed_1', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[0].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir1`, className: 'windDir_1', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[0].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed1`, className: 'windSpeed_1', dataType:"windSpeedDir_es", imgSrc: null },
             // Nearby City 2
             { text: currentObs_es[nearbyLocs[1].locId].city, id: `${thisPackage}_nearCity2`, className: 'city_2', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[1].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[1].locId].temperature, id: `${thisPackage}_nearTemp2`, className: 'temperature_2', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[1].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir2`, className: 'windDir_2', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[1].locId].windSpeed, id: `${thisPackage}_nearWindSpeed2`, className: 'windSpeed_2', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[1].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir2`, className: 'windDir_2', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[1].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed2`, className: 'windSpeed_2', dataType:"windSpeedDir_es", imgSrc: null },
             // Nearby City 3
             { text: currentObs_es[nearbyLocs[2].locId].city, id: `${thisPackage}_nearCity3`, className: 'city_3', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[2].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[2].locId].temperature, id: `${thisPackage}_nearTemp3`, className: 'temperature_3', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[2].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir3`, className: 'windDir_3', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[2].locId].windSpeed, id: `${thisPackage}_nearWindSpeed3`, className: 'windSpeed_3', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[2].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir3`, className: 'windDir_3', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[2].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed3`, className: 'windSpeed_3', dataType:"windSpeedDir_es", imgSrc: null },
             // Nearby City 4
             { text: currentObs_es[nearbyLocs[3].locId].city, id: `${thisPackage}_nearCity4`, className: 'city_4', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[3].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[3].locId].temperature, id: `${thisPackage}_nearTemp4`, className: 'temperature_4', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[3].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir4`, className: 'windDir_4', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[3].locId].windSpeed, id: `${thisPackage}_nearWindSpeed4`, className: 'windSpeed_4', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[3].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir4`, className: 'windDir_4', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[3].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed4`, className: 'windSpeed_4', dataType:"windSpeedDir_es", imgSrc: null },
         ] },
         { id: `${thisPackage}_Nearby2`, src: './images/background/packages/' + thisPackage + '/nearby.png', text: 'Condiciones Actuales', noFade: false, duration: 10, slide: './images/Slide_Near_36.png', overlay: './images/Plus_Product.png', vocallocal: false, fields:[
             { text: "TEMP", id: `${thisPackage}_nearTempLabel`, className: 'tempLabel', imgSrc: null },
@@ -635,23 +635,23 @@ const Spanish = async (locale) => {
             // Nearby City 5
             { text: currentObs_es[nearbyLocs[4].locId].city, id: `${thisPackage}_nearCity5`, className: 'city_1', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs[nearbyLocs[4].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[4].locId].temperature, id: `${thisPackage}_nearTemp5`, className: 'temperature_1', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[4].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir5`, className: 'windDir_1', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[4].locId].windSpeed, id: `${thisPackage}_nearWindSpeed5`, className: 'windSpeed_1', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[4].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir5`, className: 'windDir_1', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[4].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed5`, className: 'windSpeed_1', dataType:"windSpeedDir_es", imgSrc: null },
             // Nearby City 6
             { text: currentObs_es[nearbyLocs[5].locId].city, id: `${thisPackage}_nearCity6`, className: 'city_2', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs_es[nearbyLocs[5].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[5].locId].temperature, id: `${thisPackage}_nearTemp6`, className: 'temperature_2', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[5].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir6`, className: 'windDir_2', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[5].locId].windSpeed, id: `${thisPackage}_nearWindSpeed6`, className: 'windSpeed_2', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[5].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir6`, className: 'windDir_2', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[5].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed6`, className: 'windSpeed_2', dataType:"windSpeedDir_es", imgSrc: null },
             // Nearby City 7
             { text: currentObs_es[nearbyLocs[6].locId].city, id: `${thisPackage}_nearCity7`, className: 'city_3', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs_es[nearbyLocs[6].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[6].locId].temperature, id: `${thisPackage}_nearTemp7`, className: 'temperature_3', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[6].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir7`, className: 'windDir_3', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[6].locId].windSpeed, id: `${thisPackage}_nearWindSpeed7`, className: 'windSpeed_3', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[6].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir7`, className: 'windDir_3', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[6].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed7`, className: 'windSpeed_3', dataType:"windSpeedDir_es", imgSrc: null },
             // Nearby City 8
             { text: currentObs_es[nearbyLocs[7].locId].city, id: `${thisPackage}_nearCity8`, className: 'city_4', dataType:"city_es", imgSrc: `./images/wxicons/${currentObs_es[nearbyLocs[7].locId].iconCode}.png` },
             { text: currentObs_es[nearbyLocs[7].locId].temperature, id: `${thisPackage}_nearTemp8`, className: 'temperature_4', dataType:"temperature_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[7].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir8`, className: 'windDir_4', dataType:"windDirectionCardinal_es", imgSrc: null },
-            { text: currentObs_es[nearbyLocs[7].locId].windSpeed, id: `${thisPackage}_nearWindSpeed8`, className: 'windSpeed_4', dataType:"windSpeed_es", imgSrc: null },
+            // { text: currentObs_es[nearbyLocs[7].locId].windDirectionCardinal, id: `${thisPackage}_nearWindDir8`, className: 'windDir_4', dataType:"windDirectionCardinal_es", imgSrc: null },
+            { text: currentObs_es[nearbyLocs[7].locId].windSpeedDisplay , id: `${thisPackage}_nearWindSpeed8`, className: 'windSpeed_4', dataType:"windSpeedDir_es", imgSrc: null },
         ] },
         { id: `${thisPackage}_Extended`, src: './images/background/packages/' + thisPackage + '/extended.png', text: 'Pronóstico Extendido', noFade: false, duration: 10, slide: './images/Slide_Extended.png', overlay: './images/Plus_Product.png', vocallocal: false, fields:[
             { text: sevenDay_es[primaryLoc.locId].city, id: `${thisPackage}_extCity`, className: 'city', dataType:"city_es", imgSrc: null },

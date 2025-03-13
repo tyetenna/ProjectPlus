@@ -1370,11 +1370,13 @@ body {
 
 .alert {
     z-index: 5;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     text-align: left;
-    bottom: 0%;
-    right: 0%;
-    color:  #f2f2f2;
+    color: #f2f2f2;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .alert .textdata {
@@ -1394,41 +1396,9 @@ body {
     left: 21.5%;
 }
 
-.alert .alertSummmary {
-    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
-    position: absolute;
-    text-align: left;
-    top: 39.5%;
-    left: 18%;
-    transform: scaleY(0.99) scaleX(0.9);
-    transform-origin: left center;
-}
-
-.alert .alertSource {
-    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
-    position: absolute;
-    text-align: left;
-    top: 32.5%;
-    left: 18%;
-    transform: scaleY(0.99) scaleX(0.9);
-    transform-origin: left center;
-    color: rgb(225, 214, 124);
-}
-
-/* Update Alert slide classes for multiple alerts */
-.alert .alertSummary1 {
-    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
-    position: absolute;
-    text-align: left;
-    top: 39.5%;
-    left: 18%;
-    transform: scaleY(0.99) scaleX(0.9);
-    transform-origin: left center;
-}
-
 .alert .alertSource1 {
-    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
     position: absolute;
+    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
     text-align: left;
     top: 32.5%;
     left: 18%;
@@ -1437,30 +1407,23 @@ body {
     color: rgb(225, 214, 124);
 }
 
-/* Position for second alert - just the summary */
-.alert .alertSummary2 {
-    font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
+/* Create a container for the alert summaries */
+.alert-summaries {
     position: absolute;
-    text-align: left;
-    top: 50%;
+    top: 39.5%; /* Starting position - same as first alert */
     left: 18%;
-    transform: scaleY(0.99) scaleX(0.9);
-    transform-origin: left center;
+    display: flex;
+    flex-direction: column;
+    width: 80%; /* Limit width to ensure text doesn't overflow */
 }
-
-/* Position for third alert - just the summary */
+/* Style for all alert summaries */
+.alert .alertSummary1,
+.alert .alertSummary2,
 .alert .alertSummary3 {
     font-family: 'Berthold Akzidenz Grotesk BE Bold', sans-serif;
-    position: absolute;
     text-align: left;
-    top: 60%;
-    left: 18%;
     transform: scaleY(0.99) scaleX(0.9);
     transform-origin: left center;
-}
-
-/* Remove unused classes */
-.alert .alertSource2,
-.alert .alertSource3 {
-    display: none;
+    margin-bottom: 3vh; /* Consistent spacing between summaries */
+    position: relative; /* Use relative positioning inside the flex container */
 }

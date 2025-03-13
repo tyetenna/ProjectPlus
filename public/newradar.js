@@ -2,7 +2,7 @@ import mapboxgl from 'https://esm.sh/mapbox-gl@3.9.0';
 import { apiKey } from './config.js';
 import { primaryLoc, dataPopulationPromise } from './data.js';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoidHlldGVubmEiLCJhIjoiY200dWlwaXF4MG14czJqcHc5YTFleGs1eSJ9.dsELdib27X1xczPIMfh8dA';
+mapboxgl.accessToken = '';
 
 // Performance optimized state with memory management
 const state = {
